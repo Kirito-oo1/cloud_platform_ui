@@ -1,0 +1,286 @@
+<!--
+ * @Author: 大地测绘ZZY
+ * @Date: 2023-03-03 11:22:43
+ * @LastEditors: Zhiyu Zheng
+ * @LastEditTime: 2023-04-04 17:01:35
+ * @FilePath: \dd-space-ui\src\components\main\sys\user\index.vue
+ * @company: 西安大地测绘股份有限公司
+ * @description: 用户管理主页
+-->
+<template>
+  <div class="container">
+    <div class="head_wrap">
+      <div class="search_wrap">
+        <div class="input_wrap">
+          <el-input placeholder="请输入用户名" v-model="username" clearable></el-input>
+        </div>
+        <el-button type="primary" class="ml5" @click="handleSearch">查询</el-button>
+        <el-button type="primary" @click="handleReset">重置</el-button>
+      </div>
+      <el-button type="primary" @click="addOrUpdateHandle(false)">新增</el-button>
+    </div>
+    <div class="table_wrap">
+      <el-table :data="tableData" border style="width: 100%" height="640">
+        <el-table-column type="index" label="序号" width="50"></el-table-column>
+        <el-table-column prop="username" label="用户名" width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column label="昵称" width="100" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-if="scope.row.nick">{{ scope.row.nick }}</span>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="roleNameList" label="角色">
+          <template slot-scope="scope">
+            <div class="tagList">
+              <el-tag size="small" v-for="item in scope.row.roleNameList" :key="item">{{ item }}</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="areaNames" label="所属行政区">
+          <template slot-scope="scope">
+            <div class="tagList">
+              <el-tag size="small" v-for="item in scope.row.areaNames" :key="item">{{ item }}</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="deptName" label="所属部门" show-overflow-tooltip></el-table-column>
+        <el-table-column label="邮箱" width="200">
+          <template slot-scope="scope">
+            <span v-if="scope.row.email">{{ scope.row.email }}</span>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="手机号" width="180">
+          <template slot-scope="scope">
+            <span v-if="scope.row.mobile">{{ scope.row.mobile }}</span>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="120">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.status" @change="handleSwitch($event, scope.row)"></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150">
+          <template slot-scope="scope">
+            <el-button @click="handleAuthority(scope.row)" type="text" size="small">修改密码</el-button>
+            <el-button @click="addOrUpdateHandle(true, scope.row.userId)" type="text" size="small">编辑</el-button>
+            <el-button @click="handleDelete(scope.row)" type="text" size="small" style="color: #fa5e00">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="pagination_wrap">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="current"
+        :page-sizes="[10, 20, 30, 50]"
+        :page-size="size"
+        layout="total,sizes,prev, pager, next"
+        :total="total"
+      ></el-pagination>
+    </div>
+
+    <table-form v-if="dialogAddEditVisible" ref="addOrUpdate" @refreshDataList="getUserData"></table-form>
+  </div>
+</template>
+
+<script>
+  import { mapState } from "vuex";
+  import TableForm from "./user-form/index";
+  import postApi from "@/api/request";
+
+  export default {
+    name: "User",
+    components: { TableForm },
+    computed: {},
+    data() {
+      return {
+        username: "",
+        tableData: [],
+        current: 1,
+        size: 10,
+        total: null,
+        dialogAddEditVisible: false,
+        type: null,
+        userId: null,
+      };
+    },
+    created() {},
+    mounted() {
+      this.getUserData();
+    },
+    methods: {
+      // 获取用户信息
+      getUserData() {
+        let { username, current, size } = this;
+        let params = {
+          username,
+          current,
+          size,
+        };
+        postApi(`/sys/user/list`, params).then((res) => {
+          let { data } = res;
+          data.records.forEach((item) => {
+            item.status = item.status ? false : true;
+          });
+          this.tableData = data.records;
+          this.total = data.total;
+        });
+      },
+      /* 搜索栏 */
+      handleSearch() {
+        this.current = 1;
+        this.getUserData();
+      },
+      /* 重置 */
+      handleReset() {
+        this.username = "";
+        this.current = 1;
+        this.getUserData();
+      },
+
+      // 新增&修改
+      addOrUpdateHandle(isEdit, id) {
+        this.dialogAddEditVisible = true;
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.init(isEdit, id);
+        });
+      },
+
+      // 修改密码
+      handleAuthority(row) {
+        this.$prompt("新密码", "修改密码", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          inputType: "password",
+          inputPattern: /^.{6,50}$/,
+          inputErrorMessage: "密码长度不低于6位",
+        })
+          .then(({ value }) => {
+            let params = {
+              userId: row.userId,
+              newPswd: value,
+            };
+            postApi(`/sys/user/updatePswd`, params).then((res) => {
+              let data = res.data;
+              if (data.code == 0) {
+                this.getUserData();
+                this.$message({
+                  type: "success",
+                  message: "修改成功",
+                });
+              }
+            });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "取消密码修改",
+            });
+          });
+      },
+      // 删除
+      handleDelete(row) {
+        this.$confirm("此操作将永久删除" + row.username + "用户, 是否继续?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            let params = [row.userId];
+            postApi(`/sys/user/remove`, params).then((res) => {
+              let data = res.data;
+              if (data.code == 0) {
+                this.getUserData();
+                this.$message({
+                  type: "success",
+                  message: "删除成功!",
+                });
+              }
+            });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除",
+            });
+          });
+      },
+      // switch开关回调
+      handleSwitch(e, row) {
+        let params = {
+          ...row,
+          userId: row.id,
+        };
+        delete params.id;
+        params.status = params.status ? 0 : 1;
+        postApi(`/sys/user/update`, params).then((res) => {
+          let data = res.data;
+          if (data.code == 0) {
+            this.getUserData();
+          }
+        });
+      },
+
+      /* 分页页码回调 */
+      handleCurrentChange(e) {
+        this.current = e;
+        this.getUserData();
+      },
+      /* 分页大小回调 */
+      handleSizeChange(e) {
+        this.size = e;
+        this.getUserData();
+      },
+    },
+  };
+</script>
+
+<style lang="less" scoped>
+  .tagList {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    position: relative;
+    .head_wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .search_wrap {
+        display: flex;
+        align-items: center;
+        .input_wrap {
+          /deep/ .el-input {
+            width: 250px;
+          }
+        }
+      }
+    }
+    .table_wrap {
+      margin-top: 20px;
+      .table_keyword {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /deep/.is-leaf {
+        text-align: center;
+      }
+      /deep/.el-table__cell {
+        text-align: center;
+      }
+    }
+    .pagination_wrap {
+      position: absolute;
+      bottom: 45px;
+    }
+  }
+</style>
