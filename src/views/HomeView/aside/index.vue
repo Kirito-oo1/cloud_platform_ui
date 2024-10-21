@@ -2,7 +2,7 @@
   <div class="aside_contain">
     <!-- 系统图标 -->
     <div class="sys_img_wrap" v-if="!collapse">
-      <img class="sys_img" src="../../../assets/image/expand_logo.png" alt />
+      <img class="sys_img" src="../../../assets/image/expand_logo.svg" alt />
     </div>
     <div class="sys_img_wrap" v-else>
       <img class="sys_img" src="../../../assets/image/logo.png" alt style="width: 50px; margin-bottom: 15px" />

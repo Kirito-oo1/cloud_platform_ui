@@ -44,7 +44,7 @@
             icon: "icon-ditu",
             list: [
               {
-                name: "设备展示",
+                name: "数据展示",
                 url: "/achievementData/archivedData",
                 icon: "icon-ditu",
               },

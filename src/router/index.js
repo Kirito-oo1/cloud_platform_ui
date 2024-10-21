@@ -26,18 +26,18 @@ const routes = [
       },
       {
         path: "/achievementData",
-        name: "成果库",
+        name: "设备可视化",
         component: () => import("@/views/HomeView/main/achievementData/index.vue"),
         children: [
           {
-            path: "/achievementData/resultsData",
-            name: "暂存数据",
-            component: () => import("@/views/HomeView/main/achievementData/resultsData/index.vue"),
+            path: "/achievementData/archivedData",
+            name: "数据展示",
+            component: () => import("@/views/HomeView/main/achievementData/archivedData/index.vue"),
           },
           {
-            path: "/achievementData/archivedData",
-            name: "成果数据",
-            component: () => import("@/views/HomeView/main/achievementData/archivedData/index.vue"),
+            path: "/achievementData/resultsData",
+            name: "设备管理",
+            component: () => import("@/views/HomeView/main/achievementData/resultsData/index.vue"),
           },
         ],
       },

@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="headerTextBox">
-      <div class="headerName"><img src="../../assets/logo.png" />无人设备云平台</div>
+      <div class="headerName"><img src="../../assets/image/login_bg.png" />无人设备云平台</div>
       <div class="headerName" style="font-size: 35px">Cloud Platform For Unmanned Equipment</div>
     </div>
     <div class="loginForm">

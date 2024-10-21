@@ -118,7 +118,7 @@
     },
     created() {},
     mounted() {
-      this.getLogData();
+      // this.getLogData();
     },
     methods: {
       // 获取日志数据

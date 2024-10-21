@@ -145,11 +145,11 @@
     },
     created() {},
     mounted() {
-      this.getResultsList();
-      this.getDistrictList();
-      this.getDevelopmentZonesList();
-      this.getProjectTypeList();
-      this.getProjectStatusList();
+      // this.getResultsList();
+      // this.getDistrictList();
+      // this.getDevelopmentZonesList();
+      // this.getProjectTypeList();
+      // this.getProjectStatusList();
     },
     methods: {
       //获取行政区列表
