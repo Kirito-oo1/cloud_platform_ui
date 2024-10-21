@@ -1,0 +1,58 @@
+{
+  "id": "4715242",
+  "name": "云平台",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "s's'd",
+  "glyphs": [
+    {
+      "icon_id": "7429",
+      "name": "首页",
+      "font_class": "shouye",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "493564",
+      "name": "地图",
+      "font_class": "ditu",
+      "unicode": "e7ba",
+      "unicode_decimal": 59322
+    },
+    {
+      "icon_id": "3101169",
+      "name": "向左收起",
+      "font_class": "xiangzuoshouqi",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
+      "icon_id": "5387585",
+      "name": "箭头_向右两次",
+      "font_class": "jiantou_xiangyouliangci",
+      "unicode": "eb09",
+      "unicode_decimal": 60169
+    },
+    {
+      "icon_id": "12547687",
+      "name": "系统管理",
+      "font_class": "xitongguanli-",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "16080009",
+      "name": "用户管理",
+      "font_class": "yonghuguanli",
+      "unicode": "e688",
+      "unicode_decimal": 59016
+    },
+    {
+      "icon_id": "24848479",
+      "name": "日志管理",
+      "font_class": "rizhiguanli",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    }
+  ]
+}
