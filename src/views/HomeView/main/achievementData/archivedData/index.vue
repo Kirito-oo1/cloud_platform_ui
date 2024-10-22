@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-button @click="connection()">连接小车</el-button>
+    <el-button @click="connection()" circle icon="el-icon-check" style="position: absolute"></el-button>
     <div class="display">
       <div class="camera">
         <!-- 相机数据展示区 -->
