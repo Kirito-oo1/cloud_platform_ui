@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="headerTextBox">
-      <div class="headerName"><img src="../../assets/image/login_bg.png" />无人设备云平台</div>
+      <div class="headerName"><img src="../../assets/image/logo.png" />无人设备云平台</div>
       <div class="headerName" style="font-size: 35px">Cloud Platform For Unmanned Equipment</div>
     </div>
     <div class="loginForm">
@@ -126,7 +126,7 @@
   .login {
     width: 100%;
     height: 100%;
-    background: url("../../assets/login_bg.png");
+    background: url("../../assets/image/login_bg.png");
     background-repeat: no-repeat;
     background-size: 100% 100%;
   }
