@@ -35,7 +35,7 @@
 </template>
 
 <script>
-  import { postfromApi, getApi } from "@/api/request";
+  import { postfromApi, getApi, postApi } from "@/api/request";
   export default {
     name: "Login",
     data() {
@@ -67,16 +67,18 @@
       //   );
       // }
     },
-    mounted() {
-      console.log("123123", this.$bus);
-    },
+    mounted() {},
     methods: {
       // 登录
       submitForm(formName) {
         let _this = this;
         let header = {
-          "Content-Type": "",
+          "Content-Type": "application/json",
           Authorization: "",
+          "X-CSRFToken": document.cookie
+            .split(";")
+            .find((c) => c.trim().startsWith("csrftoken="))
+            .split("=")[1], // 添加 CSRF Token
         };
         let params = {
           username: this.form.username,
@@ -84,7 +86,19 @@
         };
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            _this.$router.push("/home");
+            postApi(`${this.serverURL}/api/login/`, params, header)
+              .then((res) => {
+                if (res.status == 200) {
+                  _this.$router.push("/home");
+                  _this.$message.success(res.data.message);
+                } else {
+                  _this.$message.error(res);
+                }
+              })
+              .catch((err) => {
+                _this.$message.error(err.response.data.msg);
+              });
+
             // postfromApi(`${this.serverURL}/oauth/token?`, params, header)
             //   .then((res) => {
             //     sessionStorage.setItem("userToken", res.data.access_token);
@@ -109,9 +123,6 @@
             //       );
             //     });
             //   })
-            //   .catch((err) => {
-            //     _this.$message.error(err.response.data.msg);
-            //   });
           } else {
             console.log("error submit!!");
             return false;

@@ -1,9 +1,22 @@
 const { defineConfig } = require("@vue/cli-service");
 const path = require("path");
+
 module.exports = defineConfig({
   transpileDependencies: true,
-  //自定义端口
-  devServer: { port: 8088 },
+
+  devServer: {
+    // 自定义端口
+    port: 8088,
+    // 前端解决跨域
+    proxy: {
+      "/api": {
+        // 代理所有以 /api 开头的请求
+        target: "http://127.0.0.1:8000", // 后端服务器地址
+        changeOrigin: true, // 修改请求头中的 Origin
+        // pathRewrite: { "^/api": "" }, // 可选，重写路径（去掉 /api）
+      },
+    },
+  },
   //第三方插件less配置
   pluginOptions: {
     "style-resources-loader": {
@@ -19,13 +32,4 @@ module.exports = defineConfig({
       },
     },
   },
-  //前端解决跨域
-  // devServer: {
-  //   proxy: {
-  //     "./api": {
-  //       target: "",
-  //       changOrigin: true,
-  //     },
-  //   },
-  // },
 });

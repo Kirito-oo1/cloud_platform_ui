@@ -70,11 +70,11 @@
                 height: ros_DisplayHeight + 'px',
               }"
             >
-              <ros3d-axes />
-              <ros3d-grid />
+              <!-- <ros3d-axes /> -->
+              <!-- <ros3d-grid /> -->
               <!-- <ros3d-path topic="/Odometry_ugv0"></ros3d-path> -->
               <!-- <ros3d-laser-scan topic="/scan"></ros3d-laser-scan> -->
-              <ros3d-point-cloud2 topic="/iris_0/velodyne_points" :color="Lidar_Point_Color1"></ros3d-point-cloud2>
+              <ros3d-point-cloud2 topic="/iris_0/velodyne_points" color="#ffffff"></ros3d-point-cloud2>
               <!-- <ros3d-point-cloud2 :topic="Lidar_topic1" :color="Lidar_Point_Color1"></ros3d-point-cloud2> -->
               <!-- <ros3d-point-cloud2 :topic="Lidar_topic2" :color="Lidar_Point_Color2"></ros3d-point-cloud2> -->
             </ros3d-viewer>
@@ -103,7 +103,6 @@
   import submitRecordsDrawer from "./submitRecordsDrawer/index";
   import filePreviewDrawer from "./filePreviewDrawer/index";
   import ROSLIB from "roslib";
-  // import { Ros3dViewer, Ros3dGrid, Ros3dAxes, Ros3dLaserScan, Ros3dPointCloud2, Ros3dPath } from "vue-ros3djs";
   import Ros3dViewer from "vue-ros3djs/src/lib-components/Ros3dViewer.vue";
   import Ros3dGrid from "vue-ros3djs/src/lib-components/Ros3dGrid.vue";
   import Ros3dAxes from "vue-ros3djs/src/lib-components/Ros3dAxes.vue";

@@ -10,7 +10,7 @@ Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.use(less);
 
-// // pro
+// pro
 // Vue.prototype.layerServerURL = 'https://geo.gem-flower.com/geoserver/';
 // Vue.prototype.serverURL = 'https://gis.gem-flower.com/bsh-api';
 // Vue.prototype.unifyLoginServerUrl = 'https://gis.gem-flower.com/bsh-unify-api';
@@ -27,7 +27,7 @@ Vue.use(less);
 // Vue.prototype.clientSecret = "_d069f21A3J9o33UT276-VC2d23o146us16Kb1Kb632w3rIkJ15f1606486170p7";
 
 // dev
-// Vue.prototype.serverURL = 'http://192.168.128.90:8890';
+Vue.prototype.serverURL = "http://127.0.0.1:8000";
 // Vue.prototype.unifyLoginServerUrl = 'http://localhost:9999';
 // Vue.prototype.webPath = 'http://localhost:8083';
 // Vue.prototype.clientId = "nodeFPqz0FlF7V39bvKvzuuico";
