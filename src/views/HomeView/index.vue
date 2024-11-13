@@ -39,18 +39,23 @@
             list: [],
           },
           {
-            name: "设备可视化",
-            url: "/achievementData",
+            name: "数据可视化",
+            url: "/dataVisual",
             icon: "icon-ditu",
             list: [
               {
                 name: "数据展示",
-                url: "/achievementData/archivedData",
+                url: "/dataVisual/archivedData",
                 icon: "icon-ditu",
               },
               {
                 name: "设备管理",
-                url: "/achievementData/resultsData",
+                url: "/dataVisual/resultsData",
+                icon: "icon-ditu",
+              },
+              {
+                name: "无人机展示",
+                url: "/dataVisual/uvaDemo",
                 icon: "icon-ditu",
               },
             ],

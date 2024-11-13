@@ -1,9 +1,9 @@
 <template>
   <div class="pop_container">
     <div class="pop_container_left">
-      <el-tree :data="folderTreeList" :node-key="nodeKey" highlight-current :expand-on-click-node="false" accordion :props="defaultProps" @node-click="handleNodeClick">
+      <el-tree :data="folderTreeList" :node-key="nodeKey" highlight-current :expand-on-click-node="false" accordion :props="defaultProps">
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span>{{ node.label }}</span>
+          <span @click="handleNodeClick(data)">{{ node.label }}</span>
         </span>
       </el-tree>
     </div>
@@ -36,9 +36,7 @@
             <template slot-scope="scope">
               <el-button v-if="!isFilePreview || scope.row.dataType != 0" @click="handleMetadataSpace(scope.row)" type="text" size="small" style="margin-right: 5px">元数据</el-button>
               <span v-if="isFilePreview" :style="scope.row.dataType != 0 ? 'margin-left:15px' : ''">
-                <el-button v-if="(scope.row.status == 0 || scope.row.status == 3 || scope.row.status == 5) && scope.row.dataType == 0" @click="handleMetadataSpace(scope.row)" type="text" size="small"
-                  >空间入库</el-button
-                >
+                <el-button v-if="(scope.row.status == 0 || scope.row.status == 3) && scope.row.dataType == 0" @click="handleMetadataSpace(scope.row)" type="text" size="small">空间入库</el-button>
                 <el-button v-if="(scope.row.status == 1 || scope.row.status == 2 || scope.row.status == 4) && scope.row.dataType == 0" @click="handleMetadataSpace(scope.row)" type="text" size="small"
                   >空间详情</el-button
                 >
@@ -80,8 +78,8 @@
 </template>
 
 <script>
-  import { postApi, getApi } from "@/api/request";
-  import metadataSpacePop from "../metadataSpacePop/index";
+  import { getApi, postApi } from "@/api/request";
+  import metadataSpacePop from "../../archivedData/metadataSpacePop/index.vue";
   export default {
     props: ["id", "defalutValue", "isFilePreview", "projectStatusList"],
     components: { metadataSpacePop },
@@ -219,8 +217,6 @@
       },
       //获取文件列表
       handleNodeClick(data) {
-        this.current = 1;
-        this.size = 10;
         this.path = this.isFilePreview ? data.id : data.filePath;
         this.getFileList();
       },
@@ -277,10 +273,11 @@
       //处理空间数据or元数据
       handleMetadataSpace(row) {
         this.dataType = row.dataType;
-        this.isSpaceCheck = false;
+        console.log("dataType", row.dataType);
         if (this.isFilePreview && row.dataType == 0) {
-          if (row.status == 0 || row.status == 3 || row.status == 5) {
+          if (row.status == 0 || row.status == 3) {
             this.isFileDetail = false;
+            this.isSpaceCheck = false;
             this.metadataSpaceTitle = "空间入库";
           } else {
             this.metadataSpaceTitle = "空间详情";

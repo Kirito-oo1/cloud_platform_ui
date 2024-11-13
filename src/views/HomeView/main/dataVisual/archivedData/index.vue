@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <el-button @click="connection()" circle icon="el-icon-check" style="position: absolute"></el-button>
     <div class="display">
       <div class="camera">
         <!-- 相机数据展示区 -->
@@ -21,6 +20,8 @@
       </div>
       <div class="map">
         <!-- 地图及相关操作 -->
+        <!-- 地图容器 -->
+        <map-view></map-view>
         <!-- <el-col :span="16" class="colone" style="padding-left: 0px">
           <div class="rowmap">
             <div id="RealMap" style="position: relative; z-index: 1"></div>
@@ -74,7 +75,7 @@
               <!-- <ros3d-grid /> -->
               <!-- <ros3d-path topic="/Odometry_ugv0"></ros3d-path> -->
               <!-- <ros3d-laser-scan topic="/scan"></ros3d-laser-scan> -->
-              <ros3d-point-cloud2 topic="/iris_0/velodyne_points" color="#ffffff"></ros3d-point-cloud2>
+              <ros3d-point-cloud2 topic="/cloud_registered" color="#ffffff"></ros3d-point-cloud2>
               <!-- <ros3d-point-cloud2 :topic="Lidar_topic1" :color="Lidar_Point_Color1"></ros3d-point-cloud2> -->
               <!-- <ros3d-point-cloud2 :topic="Lidar_topic2" :color="Lidar_Point_Color2"></ros3d-point-cloud2> -->
             </ros3d-viewer>
@@ -82,6 +83,7 @@
         </div>
       </div>
     </div>
+    <div class="control"><el-button @click="connection()" circle icon="el-icon-check"></el-button></div>
     <!-- 新增 -->
     <!-- <div v-if="dialogAddEditVisible">
       <el-dialog width="50%" :title="addEditTitle" :visible.sync="dialogAddEditVisible">
@@ -99,9 +101,7 @@
 
 <script>
   import $ from "jquery";
-  import addEditPop from "./addUpdatePop/index";
-  import submitRecordsDrawer from "./submitRecordsDrawer/index";
-  import filePreviewDrawer from "./filePreviewDrawer/index";
+  //ros3d相关
   import ROSLIB from "roslib";
   import Ros3dViewer from "vue-ros3djs/src/lib-components/Ros3dViewer.vue";
   import Ros3dGrid from "vue-ros3djs/src/lib-components/Ros3dGrid.vue";
@@ -109,10 +109,12 @@
   import Ros3dLaserScan from "vue-ros3djs/src/lib-components/Ros3dLaserScan.vue";
   import Ros3dPointCloud2 from "vue-ros3djs/src/lib-components/Ros3dPointCloud2.vue";
   import Ros3dPath from "vue-ros3djs/src/lib-components/Ros3dPath.vue";
+  //组件
+  import mapView from "@/components/mapComponent/index.vue";
   import { postApi, getApi, delApi } from "@/api/request";
   export default {
     name: "",
-    components: { Ros3dViewer, Ros3dGrid, Ros3dAxes, Ros3dLaserScan, Ros3dPointCloud2, Ros3dPath },
+    components: { Ros3dViewer, Ros3dGrid, Ros3dAxes, Ros3dLaserScan, Ros3dPointCloud2, Ros3dPath, mapView },
     data() {
       return {
         addEditTitle: "",
@@ -181,8 +183,8 @@
           divID: "mjpegOne",
           host: "192.168.134.128",
           // host: this.car_one_ip,
-          width: 350,
-          height: 350,
+          width: 330,
+          height: 250,
           // topic: "/kinect2/qhd/image_color_rect",
           topic: "iris_0/stereo_camera/right/image_raw",
           // topic: this.imageOne_topic,
@@ -194,8 +196,8 @@
         var viewerTwo = new MJPEGCANVAS.Viewer({
           divID: "mjpegTwo",
           host: this.car_one_ip,
-          width: 350,
-          height: 350,
+          width: 330,
+          height: 250,
           topic: this.imageTwo_topic,
           interval: 200,
           quality: 200,
@@ -205,8 +207,8 @@
         //  * /Odometry [nav_msgs/Odometry]里程计（飞机的位置）
         //  * /clock [rosgraph_msgs/Clock]
         //  * /cloud_registered [sensor_msgs/PointCloud2]点云
-        //  * /diagnostics [diagnostic_msgs/DiagnosticArray]mavroos诊断信息
-        //  * /iris_0/mavros/altitude [mavros_msgs/Altitude]姿态
+        //  * /diagnostics [diagnostic_msgs/DiagnosticArray]mavroos诊断信息 -- 叠加地图显示
+        //  * /iris_0/mavros/altitude [mavros_msgs/Altitude]姿态 -- https://sebmatton.github.io/flightindicators/
         //  * /iris_0/mavros/battery [sensor_msgs/BatteryState]电池状态
         //  * /iris_0/mavros/global_position/global [sensor_msgs/NavSatFix]全局位置
         //  * /iris_0/mavros/imu/data [sensor_msgs/Imu]IMU
@@ -219,20 +221,20 @@
         //  * /iris_0/stereo_camera/right/image_raw [sensor_msgs/Image]摄像头
         //  * /iris_0/velodyne_points [sensor_msgs/PointCloud2]激光雷达原始点云
         //  * /planning/pos_cmd [quadrotor_msgs/PositionCommand]规划算法输出轨迹
-        var imu = new ROSLIB.Topic({
-          ros: this.ros,
-          name: "/iris_0/mavros/imu/data",
-          messageType: "sensor_msgs/Imu",
-        });
+        // var imu = new ROSLIB.Topic({
+        //   ros: this.ros,
+        //   name: "/iris_0/mavros/imu/data",
+        //   messageType: "sensor_msgs/Imu",
+        // });
         var battery = new ROSLIB.Topic({
           ros: this.ros,
-          name: "/iris_0/mavros/battery",
-          messageType: "sensor_msgs/BatteryState",
+          name: "/iris_0/mavros/altitude",
+          messageType: "mavros_msgs/Altitude",
         });
 
-        imu.subscribe((msg) => {
-          console.log("IMUdata========", msg);
-        });
+        // imu.subscribe((msg) => {
+        //   console.log("IMUdata========", msg);
+        // });
         battery.subscribe((msg) => {
           console.log("Batterydata========", msg);
         });
@@ -249,12 +251,14 @@
     padding: 20px;
     position: relative;
     .display {
-      height: 100%;
+      border: 3px solid #dfe4ed;
+      height: 70%;
       display: flex;
       align-items: center;
+      overflow: hidden;
       .camera {
         height: 100%;
-        width: 30%;
+        width: 25%;
         .cameraDisplayBar {
           height: 100%;
           width: 100%;
@@ -263,22 +267,22 @@
           align-items: center;
           justify-content: space-around;
           .camerashow {
-            min-width: 360px;
-            min-height: 360px;
-            border: 1px solid #b3b3b3;
+            min-width: 350px;
+            min-height: 250px;
+            border: 3px solid #dfe4ed;
             border-radius: 5px;
-            padding-left: 10px;
+            padding: 10px;
             padding-top: 10px;
           }
         }
       }
       .map {
         height: 100%;
-        width: 20%;
+        width: 40%;
       }
       .lidar {
         height: 100%;
-        width: 50%;
+        width: 35%;
         .lidarDisplayBar {
           height: 100%;
           width: 100%;
@@ -287,15 +291,19 @@
           align-items: center;
           justify-content: space-around;
           .lidarshow {
-            min-width: 700px;
+            min-width: 530px;
             min-height: 500px;
-            border: 1px solid #b3b3b3;
+            border: 3px solid #dfe4ed;
             border-radius: 5px;
             padding-left: 10px;
             padding-top: 10px;
           }
         }
       }
+    }
+    .control {
+      border: 3px solid #dfe4ed;
+      height: 30%;
     }
 
     /deep/.el-dialog__wrapper {

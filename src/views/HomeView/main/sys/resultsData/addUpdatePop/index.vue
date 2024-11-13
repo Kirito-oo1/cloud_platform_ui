@@ -13,12 +13,26 @@
             </span>
           </el-form-item>
           <el-form-item label="关联项目" :prop="type != 2 ? 'name' : ''" class="select_wrap">
-            <span v-if="ruleForm.source">
-              <el-select v-if="type != 2" v-model="ruleForm.name" clearable filterable placeholder="请选择关联项目" value-key="code" @change="handleConnectPro">
-                <el-option v-for="item in connectProList" :key="item.code" :label="item.name" :value="item"></el-option>
+            <span v-if="ruleForm.source && type != 2">
+              <el-select
+                popper-class="select_popper"
+                :popper-append-to-body="false"
+                v-if="type != 2"
+                v-model="ruleForm.name"
+                clearable
+                filterable
+                placeholder="请选择关联项目"
+                value-key="code"
+                @change="handleConnectPro"
+              >
+                <el-option v-for="item in connectProList" :key="item.code" :label="item.name" :value="item">
+                  <div :title="item.name" style="float: left; width: 100%" class="text_ellipsis">
+                    {{ item.name }}
+                  </div>
+                </el-option>
               </el-select>
             </span>
-            <span v-if="!ruleForm.source">
+            <span v-if="!ruleForm.source && type != 2">
               <el-input v-model="ruleForm.name" style="width: 72%" placeholder="填写关联项目名称"></el-input>
             </span>
 
@@ -78,6 +92,14 @@
             <span v-else>
               <span style="margin-left: -15px">:</span>
               {{ ruleForm.orgName }}
+            </span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="文件路径" v-if="type == 2">
+            <span>
+              <span style="margin-left: -15px">:</span>
+              {{ ruleForm.tempUrl }}
             </span>
           </el-form-item>
         </el-col>
@@ -154,7 +176,9 @@
         },
       };
     },
-    created() {},
+    created() {
+      this.handleAreaCodeChange();
+    },
     mounted() {
       if (this.type != 2) {
         this.getProSource();
@@ -241,9 +265,9 @@
               beginTime,
               name,
               code,
-              proType: proType[proType.length - 1],
-              orgId: orgId[orgId.length - 1],
-              areaCode: areaCode[areaCode.length - 1],
+              proType,
+              orgId,
+              areaCode, //: areaCode[areaCode.length - 1]
               proYear,
             };
             if (this.type == 0) {
@@ -293,6 +317,27 @@
     height: 100%;
     box-sizing: border-box;
     padding: 10px 20px !important;
+
+    /deep/.select_popper {
+      max-width: 300px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /deep/.select_popper:hover .el-popper {
+      display: block !important;
+    }
+
+    /deep/.select_popper .el-popper {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      white-space: normal;
+    }
+
     /deep/.el-table__cell {
       text-align: center;
     }

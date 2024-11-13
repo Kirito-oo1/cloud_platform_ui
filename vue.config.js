@@ -5,6 +5,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
 
   devServer: {
+    open: true,
     // 自定义端口
     port: 8088,
     // 前端解决跨域

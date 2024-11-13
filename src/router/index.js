@@ -25,19 +25,24 @@ const routes = [
         component: () => import("@/views/HomeView/main/systemHome/index.vue"),
       },
       {
-        path: "/achievementData",
-        name: "设备可视化",
-        component: () => import("@/views/HomeView/main/achievementData/index.vue"),
+        path: "/dataVisual",
+        name: "数据可视化",
+        component: () => import("@/views/HomeView/main/dataVisual/index.vue"),
         children: [
           {
-            path: "/achievementData/archivedData",
+            path: "/dataVisual/archivedData",
             name: "数据展示",
-            component: () => import("@/views/HomeView/main/achievementData/archivedData/index.vue"),
+            component: () => import("@/views/HomeView/main/dataVisual/archivedData/index.vue"),
           },
           {
-            path: "/achievementData/resultsData",
+            path: "/dataVisual/resultsData",
             name: "设备管理",
-            component: () => import("@/views/HomeView/main/achievementData/resultsData/index.vue"),
+            component: () => import("@/views/HomeView/main/dataVisual/resultsData/index.vue"),
+          },
+          {
+            path: "/dataVisual/uvaDemo",
+            name: "无人机展示",
+            component: () => import("@/views/HomeView/main/dataVisual/uvaDemo/index.vue"),
           },
         ],
       },
