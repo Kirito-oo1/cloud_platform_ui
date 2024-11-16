@@ -48,8 +48,11 @@ sudo apt install ros-noetic-web-video-server
 
 条件: ip 互通、话题一致
 
-启动:
+### 启动:
+
 roscore --首先启动
 roslaunch rosbridge_server rosbridge_websocket.launch
 rosrun tf2_web_republisher tf2_web_republisher
 rosrun web_video_server web_video_server
+
+![Image text]()
