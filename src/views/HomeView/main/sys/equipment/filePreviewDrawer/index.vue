@@ -58,31 +58,13 @@
         ></el-pagination>
       </div>
     </div>
-    <!-- 空间入库or元数据 -->
-    <div v-if="dialogMetadataSpaceVisible">
-      <el-dialog width="64%" top="10vh" :title="metadataSpaceTitle" :visible.sync="dialogMetadataSpaceVisible" :append-to-body="true">
-        <metadataSpacePop
-          @closeMetadataSpacePop="closeMetadataSpacePop"
-          :isFilePreview="isFilePreview"
-          :dataUrl="dataUrl"
-          :proId="id"
-          :defalutValue="defalutValue"
-          :fileId="fileId"
-          :dataType="dataType"
-          :isSpaceCheck="isSpaceCheck"
-          :isFileDetail="isFileDetail"
-        ></metadataSpacePop>
-      </el-dialog>
-    </div>
   </div>
 </template>
 
 <script>
   import { getApi, postApi } from "@/api/request";
-  import metadataSpacePop from "../../archivedData/metadataSpacePop/index.vue";
   export default {
     props: ["id", "defalutValue", "isFilePreview", "projectStatusList"],
-    components: { metadataSpacePop },
     data() {
       return {
         isFileDetail: false,

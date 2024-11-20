@@ -21,7 +21,7 @@
     <div class="display">
       <div class="diagnostics">
         <div class="diagnosticsDisplayBar">
-          <!-- 显示诊断信息 -->
+          <!-- 显示mavros诊断信息 -->
           <div v-if="connected" class="diagnostics-info">
             <el-card v-for="(status, index) in formattedDiagnosticsInfo" :key="index" class="diagnostic-card">
               <div slot="header" class="clearfix">
@@ -37,14 +37,14 @@
         </div>
       </div>
       <div class="lidar">
-        <!-- ros数据展示展示区 -->
+        <!-- mavros数据展示展示区 -->
         <div class="rosDisplayBar">
           <div id="lidarshow" class="lidarshow">
             <div id="lidar_tag" style="position: absolute; z-index: 2" :style="{ display: tagDisplay }">
               <el-tag effect="dark" size="large">激光数据</el-tag>
             </div>
             <!-- mavros状态显示 -->
-            <div class="battery-status" style="position: absolute; z-index: 2; top: 10px; right: 150px" v-if="connected">
+            <div class="battery-status" style="position: absolute; z-index: 2; top: 10px; right: 160px" v-if="connected">
               <div class="battery-label">
                 连接状态：
                 <span :style="{ color: mavrosState.connected ? 'green' : 'red' }">
@@ -53,7 +53,7 @@
               </div>
               <div class="battery-label">
                 锁定开启：
-                <span :style="{ color: mavrosState.connected ? 'green' : 'red' }">
+                <span :style="{ color: mavrosState.armed ? 'green' : 'red' }">
                   {{ mavrosState.connected ? "解锁" : "锁定" }}
                 </span>
               </div>
@@ -77,7 +77,7 @@
             >
               <ros3d-axes />
               <ros3d-grid />
-              <ros3d-point-cloud2 topic="/cloud_registered" color="#ffffff"></ros3d-point-cloud2>
+              <ros3d-point-cloud2 topic="/cloud_registered" max_pts="100000" particleSize="0.3" color="#ffffff"></ros3d-point-cloud2>
               <ros3d-path topic="/path" color="#ff0000"></ros3d-path>
             </ros3d-viewer>
           </div>
@@ -111,9 +111,37 @@
       </div>
     </div>
     <div class="control">
-      <div><el-button type="success" round @click="connection()">连接设备</el-button></div>
-      <div><el-button type="success" round @click="connection()">起飞</el-button> <el-button type="success" round @click="connection()">降落</el-button></div>
-      <div><el-button type="success" round @click="connection()">飞行模式切换</el-button> <el-button type="success" round @click="connection()">开始探索</el-button></div>
+      <el-row class="row-control">
+        <!-- 添加设备 -->
+        <el-col :span="2" class="row-control-button">
+          <el-button type="success" icon="el-icon-circle-plus" @click="connection()" style="margin: 2px 2px 0px 2px; border-radius: 10px">连接设备</el-button>
+          <el-button type="primary" icon="el-icon-caret-right" @click="controlUVA(1)" style="margin: 2px 2px 0px 2px; border-radius: 10px">起&emsp;&emsp;飞</el-button>
+          <el-button type="danger" icon="el-icon-caret-left" @click="controlUVA(2)" style="margin: 2px 2px 0px 2px; border-radius: 10px">降&emsp;&emsp;落</el-button>
+          <el-button type="warning" icon="el-icon-share" @click="controlUVA(3)" style="margin: 2px 2px 0px 2px; border-radius: 10px">模式切换</el-button>
+        </el-col>
+        <!-- 信息列表 -->
+        <el-col :span="12" class="row-control-button">
+          <el-table :data="tableData_monitor" style="width: 100%" max-height="250">
+            <el-table-column fixed prop="EquipmentType" label="设备类型" width="80"></el-table-column>
+            <el-table-column prop="EquipmentModel" label="设备型号" width="80"></el-table-column>
+            <el-table-column prop="EquipmentIP" label="设备IP" width="80"></el-table-column>
+            <el-table-column prop="TaskName" label="任务名称" width="80"></el-table-column>
+            <el-table-column prop="Operators" label="作业人员" width="80"></el-table-column>
+            <el-table-column prop="longitude" label="经度" width="120"></el-table-column>
+            <el-table-column prop="latitude" label="纬度" width="120"></el-table-column>
+            <el-table-column prop="height" label="高度" width="100"></el-table-column>
+            <el-table-column fixed="right" label="操作" width="80">
+              <template slot-scope="scope">
+                <el-button @click.native.prevent="deleteRow(scope.$index, tableData_monitor)" type="text" size="medium">移除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+        <!-- 遥控 -->
+        <el-col :span="5"> 控遥 </el-col>
+        <!-- 小车速度图表 -->
+        <el-col :span="5" class="row-control-button"> 图表 </el-col>
+      </el-row>
     </div>
     <!-- 新增 -->
     <!-- <div v-if="dialogAddEditVisible">
@@ -188,12 +216,6 @@
       //连接
       connection() {
         this.connected = false;
-        //标签可视
-        this.tagDisplay = "block";
-        //ROSview可视
-        this.lidarShowDiv.width = $("#lidarshow").width() + 1;
-        this.lidarShowDiv.height = $("#lidarshow").height();
-
         this.ros = new ROSLIB.Ros({
           //需改成小车的ip
           //url: "ws://" + this.form.EquipmentIP + ":9090",
@@ -205,6 +227,11 @@
             type: "success",
             message: "连接成功",
           });
+          //标签可视
+          this.tagDisplay = "block";
+          //ROSview可视
+          this.lidarShowDiv.width = $("#lidarshow").width() + 1;
+          this.lidarShowDiv.height = $("#lidarshow").height();
           this.getRosData();
         });
         this.ros.on("error", () => {
@@ -216,7 +243,7 @@
       },
       //获取数据
       getRosData() {
-        //时间
+        //诊断数据
         var diagnostics = new ROSLIB.Topic({
           ros: this.ros,
           name: "/diagnostics",
@@ -257,7 +284,7 @@
           this.$bus.$emit("IMUdata", this.imudata);
         });
       },
-
+      // 格式化诊断信息
       formatDiagnosticsInfo(diagnostics) {
         this.formattedDiagnosticsInfo = diagnostics.status.map((status) => {
           // 去除前缀 iris_0/mavros:
@@ -274,8 +301,31 @@
             }),
           };
         });
-        // console.log("----------diagnosticsInfo", this.diagnosticsInfo);
-        // console.log("==========formattedDiagnosticsInfo", this.formattedDiagnosticsInfo);
+      },
+      //控制
+      controlUVA(type) {
+        if (type == 1) {
+          var cmd_vel_listener = new ROSLIB.Topic({
+            ros: this.ros,
+            name: "/cmd_vel",
+            messageType: "geometry_msgs/Twist",
+          });
+
+          var twist = new ROSLIB.Message({
+            linear: {
+              x: 0.5,
+              y: 0,
+              z: 0,
+            },
+            angular: {
+              x: 0,
+              y: 0,
+              z: 0,
+            },
+          });
+          cmd_vel_listener.publish(twist);
+        } else if (type == 2) {
+        }
       },
     },
   };
@@ -355,6 +405,10 @@
       border-radius: 16px;
       box-shadow: 0 0 10px 0 #dfdfdf;
       height: 21%;
+      width: 100%;
+      .row-control {
+        width: 100%;
+      }
     }
     .battery-status {
       background-color: rgba(0, 0, 0, 0.6);

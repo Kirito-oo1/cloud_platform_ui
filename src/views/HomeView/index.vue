@@ -45,12 +45,7 @@
             list: [
               {
                 name: "数据展示",
-                url: "/dataVisual/archivedData",
-                icon: "icon-ditu",
-              },
-              {
-                name: "设备管理",
-                url: "/dataVisual/resultsData",
+                url: "/dataVisual/dataShow",
                 icon: "icon-ditu",
               },
               {
@@ -65,6 +60,11 @@
             url: "/sys",
             icon: "icon-xitongguanli-",
             list: [
+              {
+                name: "设备管理",
+                url: "/sys/equipment",
+                icon: "icon-ditu",
+              },
               {
                 name: "用户管理",
                 url: "/sys/user",

@@ -3,23 +3,16 @@
     <div class="head_wrap">
       <el-form ref="resultsForm" :model="form" label-width="80px">
         <div class="search_wrap">
-          <el-form-item label="关键字">
-            <el-input v-model="form.keyword" placeholder="请输入项目名称或编号" clearable></el-input>
+          <el-form-item label="设备名称">
+            <el-input v-model="form.keyword" placeholder="请输入设备名称或编号" clearable></el-input>
           </el-form-item>
-          <el-form-item label="项目状态">
-            <el-select v-model="form.status" placeholder="请选择项目状态" clearable>
+          <el-form-item label="设备状态">
+            <el-select v-model="form.status" placeholder="请选择设备状态" clearable>
               <el-option :label="item.name" :value="item.value" v-for="item in projectStatusList" :key="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="项目类型">
+          <el-form-item label="设备类型">
             <el-cascader clearable v-model="form.proType" :options="projectTypeList" :show-all-levels="false" :props="props" @change="handleProTypeChange" collapse-tags></el-cascader>
-          </el-form-item>
-
-          <el-form-item label="行政区">
-            <el-cascader clearable v-model="form.areaCode" :options="districtList" :show-all-levels="false" :props="props" @change="handleAreaCodeChange" collapse-tags></el-cascader>
-          </el-form-item>
-          <el-form-item label="开发区">
-            <el-cascader clearable v-model="form.orgId" :options="developmentZones" :show-all-levels="false" :props="props" @change="handleOrgIdChange" collapse-tags></el-cascader>
           </el-form-item>
         </div>
       </el-form>
@@ -36,34 +29,31 @@
       </el-form>
       <el-table :data="tableData" border style="width: 100%" height="580">
         <el-table-column type="index" label="序号" width="80"></el-table-column>
-        <el-table-column prop="name" label="项目名称" width="180" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="code" label="项目编号" width="180" show-overflow-tooltip></el-table-column>
-        <el-table-column label="发布时间" width="150">
+        <el-table-column prop="name" label="设备名称" width="180" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="ip" label="IP地址" width="300" show-overflow-tooltip></el-table-column>
+        <el-table-column label="设备状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.beginTime">{{ scope.row.beginTime }}</span>
+            <span> <el-switch v-model="scope.row.connect" disabled active-color="#13ce66" inactive-color="#ff4949"> </el-switch></span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="equipmentType" label="设备类型" width="180" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="equipmentModel" label="设备型号" width="180"></el-table-column>
+        <el-table-column prop="proYear" label="设备位置(经度)" width="180">
+          <template slot-scope="scope">
+            <span v-if="scope.row.lng">{{ scope.row.lng }}</span>
             <span v-else>-</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="项目状态">
+          </template></el-table-column
+        >
+        <el-table-column prop="deptName" label="设备位置(纬度)" width="180">
           <template slot-scope="scope">
-            <span>{{ scope.row.statusName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="proTypeName" label="关联项目" width="180" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="proTypeName" label="项目类型" width="180"></el-table-column>
-        <el-table-column prop="proYear" label="项目年份" width="180"></el-table-column>
-        <el-table-column prop="deptName" label="所属部门" width="180"></el-table-column>
-        <el-table-column prop="areaName" label="行政区" width="180"></el-table-column>
-        <el-table-column prop="orgName" label="开发区" width="180"></el-table-column>
+            <span v-if="scope.row.lat">{{ scope.row.lat }}</span>
+            <span v-else>-</span>
+          </template></el-table-column
+        >
         <el-table-column label="操作" width="200" fixed="right">
           <template slot-scope="scope">
-            <!-- <el-button
-              @click="handleAddDetail(1,scope.row)"
-              type="text"
-              size="small"
-            >修改</el-button> -->
+            <el-button @click="handleAddDetail(1, scope.row)" type="text" size="small">修改</el-button>
             <el-button @click="handleAddDetail(2, scope.row)" type="text" size="small" style="color: #666">详情</el-button>
-            <el-button @click="handleFilePreview(0, scope.row)" type="text" size="small">元数据填写</el-button>
             <el-button @click="handleDelete(scope.row)" type="text" size="small" style="color: red">删除</el-button>
           </template>
         </el-table-column>
@@ -83,41 +73,22 @@
     <!-- 新增 -->
     <div v-if="dialogAddEditVisible">
       <el-dialog width="50%" :title="addEditTitle" :visible.sync="dialogAddEditVisible">
-        <addEditPop @closePop="closePop" :type="type" :id="id" :districtList="districtList" :projectTypeList="projectTypeList"></addEditPop>
+        <addEditPop @closePop="closePop" :type="type" :id="id" :projectTypeList="projectTypeList"></addEditPop>
       </el-dialog>
-    </div>
-    <!-- 提交记录 -->
-    <div v-if="submitRecordsDrawerVisible">
-      <el-drawer title="提交记录" :visible.sync="submitRecordsDrawerVisible" direction="rtl" size="40%">
-        <submitRecordsDrawer @closePop="closePop" :id="id"></submitRecordsDrawer>
-      </el-drawer>
-    </div>
-    <!-- 提交文件(元数据填写)/文件预览/ -->
-    <div v-if="filePreviewDrawerVisible">
-      <el-drawer :append-to-body="true" :title="submitPreviewTitle" :visible.sync="filePreviewDrawerVisible" direction="rtl" size="80%">
-        <filePreviewDrawer @closePop="closePop" :id="id" :defalutValue="defalutValue" :isFilePreview="isFilePreview" :projectStatusList="projectStatusList"></filePreviewDrawer>
-      </el-drawer>
     </div>
   </div>
 </template>
 
 <script>
   import addEditPop from "./addUpdatePop/index";
-  import submitRecordsDrawer from "./submitRecordsDrawer/index";
-  import filePreviewDrawer from "./filePreviewDrawer/index";
   import { postApi, getApi, delApi } from "@/api/request";
   export default {
-    components: { addEditPop, submitRecordsDrawer, filePreviewDrawer },
+    components: { addEditPop },
     data() {
       return {
         addEditTitle: "",
-        submitPreviewTitle: "",
         dialogAddEditVisible: false,
-        submitRecordsDrawerVisible: false,
-        filePreviewDrawerVisible: false,
-        isFilePreview: null, //提交or文件预览
         id: null,
-        defalutValue: {},
         type: null, //新增or查看
         form: {
           keyword: "",
@@ -129,7 +100,11 @@
           total: 0,
           current: 1,
         },
-        tableData: [],
+        tableData: [
+          { index: 1, name: "DJI_Mavic_3E", ip: "ws://192.168.134.128:9090", connect: false, equipmentType: "大疆无人机", equipmentModel: "Mavic3E", lng: 116.405289, lat: 39.904987 },
+          { index: 2, name: "自制无人机", ip: "ws://192.168.134.117:9090", connect: false, equipmentType: "无人机", equipmentModel: "CUN01", lng: 116.405289, lat: 39.904987 },
+          { index: 3, name: "轻舟机器人", ip: "ws://192.168.134.125:9090", connect: false, equipmentType: "无人车", equipmentModel: "nano", lng: 116.405289, lat: 39.904987 },
+        ],
         props: {
           multiple: true,
           checkStrictly: true,
@@ -137,8 +112,6 @@
           label: "name",
           value: "id",
         },
-        districtList: [],
-        developmentZones: [],
         projectStatusList: [],
         projectTypeList: [],
       };
@@ -152,24 +125,6 @@
       // this.getProjectStatusList();
     },
     methods: {
-      //获取行政区列表
-      getDistrictList() {
-        getApi(`/sys/area/tree`, {}).then((res) => {
-          let { data } = res;
-          if (data.code == 0) {
-            this.districtList = data.data;
-          }
-        });
-      },
-      //获取开发区列表
-      getDevelopmentZonesList() {
-        getApi(`/sys/org/tree`, {}).then((res) => {
-          let { data } = res;
-          if (data.code == 0) {
-            this.developmentZones = data.data;
-          }
-        });
-      },
       //获取项目类型列表
       getProjectTypeList() {
         getApi(`/item/project/typeTree`, {}).then((res) => {
@@ -253,8 +208,6 @@
       // 关闭弹窗
       closePop() {
         this.dialogAddEditVisible = false;
-        this.submitRecordsDrawerVisible = false;
-        this.filePreviewDrawerVisible = false;
         this.getResultsList();
       },
       // 新增/修改/详情  ( 0:新增,1:修改,2:详情)
@@ -271,22 +224,7 @@
         }
         this.dialogAddEditVisible = true;
       },
-      //文件预览/提交  ( 0:提交,1:文件预览 )
-      handleFilePreview(type, row) {
-        this.isFilePreview = type;
-        if (type) {
-          this.submitPreviewTitle = "文件预览";
-        } else {
-          this.submitPreviewTitle = "提交文件";
-        }
-        this.defalutValue = {
-          areaCode: row.areaCode,
-          orgId: row.orgId,
-          proYear: row.proYear,
-        };
-        this.id = row.id;
-        this.filePreviewDrawerVisible = true;
-      },
+
       // 删除
       handleDelete(row) {
         console.log(row);

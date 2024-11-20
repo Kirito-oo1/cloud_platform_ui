@@ -1,11 +1,8 @@
-<!--
- * @Author: 大地测绘ZZY
- * @Date: 2023-03-03 11:22:43
- * @LastEditors: 大地测绘ZZY
- * @LastEditTime: 2023-03-13 10:35:03
- * @FilePath: \dd-space-ui\src\components\main\sys\log\index.vue
- * @company: 西安大地测绘股份有限公司
- * @description: 日志管理主页
+<!-- 
+ * @Author:Zhiyu Zheng
+ * @Company: 首都师范大学
+ * @LastEditTime: 2024-11-01 16:00
+ * @Description: 系统首页
 -->
 <template>
   <div class="container">

@@ -13,6 +13,7 @@
     "element-ui": "^2.15.14",
     "jquery": "^3.7.1",
     "leaflet": "^1.9.4",
+    "leaflet.pm": "^2.2.0",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
     "roslib": "^1.4.1",

@@ -19,39 +19,12 @@
         </div>
       </div>
       <div class="map">
-        <!-- 地图及相关操作 -->
+        <!-- 地图相关操作 -->
+        <div class="map-tool-menu">
+          <map-tool-menu style="z-index: 2"></map-tool-menu>
+        </div>
         <!-- 地图容器 -->
-        <map-view></map-view>
-        <!-- <el-col :span="16" class="colone" style="padding-left: 0px">
-          <div class="rowmap">
-            <div id="RealMap" style="position: relative; z-index: 1"></div>
-            <div style="width: 400px; height: 100px; position: absolute; z-index: 2; right: 0; top: 0; text-align: right">
-              <el-button-group v-show="isCollectShow">
-                <el-tooltip content="绘制任务区" placement="bottom" effect="light">
-                  <el-button type="primary" icon="el-icon-edit" @click="draw_mission_area"></el-button>
-                </el-tooltip>
-                <el-tooltip content="绘制障碍区" placement="bottom" effect="light">
-                  <el-button type="primary" icon="el-icon-s-release" @click="draw_obstacle_area"></el-button>
-                </el-tooltip>
-                <el-tooltip content="任务信息表" placement="bottom" effect="light">
-                  <el-button type="primary" icon="el-icon-s-data" @click="set_mission_planner_form"></el-button>
-                </el-tooltip>
-                <el-tooltip content="添加起点" placement="bottom" effect="light">
-                  <el-button type="primary" icon="el-icon-s-promotion" @click="add_starting_point"></el-button>
-                </el-tooltip>
-                <el-tooltip content="取消绘制" placement="bottom" effect="light">
-                  <el-button type="primary" icon="el-icon-close" @click="disdraw"></el-button>
-                </el-tooltip>
-                <el-tooltip content="加载任务区" placement="bottom" effect="light">
-                  <el-button type="primary" icon="el-icon-folder-add" @click="loadmissionPolygon"></el-button>
-                </el-tooltip>
-                <el-tooltip content="删除所有图层" placement="bottom" effect="light">
-                  <el-button type="primary" icon="el-icon-delete" @click="ClearAllLayer"></el-button>
-                </el-tooltip>
-              </el-button-group>
-            </div>
-          </div>
-        </el-col> -->
+        <map-view style="z-index: 1"></map-view>
       </div>
       <div class="lidar">
         <!-- 激光数据展示展示区 -->
@@ -83,7 +56,57 @@
         </div>
       </div>
     </div>
-    <div class="control"><el-button @click="connection()" circle icon="el-icon-check"></el-button></div>
+    <div class="control">
+      <el-row class="row-DeviceConnection">
+        <!-- 添加设备 -->
+        <el-col :span="2" class="row-DeviceConnectionButton">
+          <el-button type="success" icon="el-icon-circle-plus" @click="dialog = true" style="margin: 2px">添加设备</el-button>
+          <el-button type="primary" icon="el-icon-caret-right" @click="sendA" style="margin: 2px">启动监测</el-button>
+          <el-button type="danger" icon="el-icon-caret-left" @click="stopA" style="margin: 2px">停止监测</el-button>
+          <el-button type="warning" icon="el-icon-share" @click="connection" style="margin: 2px" :disabled="ConnectAble">连接小车</el-button>
+        </el-col>
+        <!-- 信息列表 -->
+        <el-col :span="13" class="row-DeviceConnectionButton">
+          <el-table :data="tableData_monitor" style="width: 100%" max-height="250">
+            <el-table-column fixed prop="EquipmentType" label="设备类型" width="80"></el-table-column>
+            <el-table-column prop="EquipmentModel" label="设备型号" width="80"></el-table-column>
+            <el-table-column prop="EquipmentIP" label="设备IP" width="80"></el-table-column>
+            <el-table-column prop="TaskName" label="任务名称" width="80"></el-table-column>
+            <el-table-column prop="Operators" label="作业人员" width="80"></el-table-column>
+            <el-table-column prop="longitude" label="经度" width="120"></el-table-column>
+            <el-table-column prop="latitude" label="纬度" width="120"></el-table-column>
+            <el-table-column prop="height" label="高度" width="120"></el-table-column>
+            <el-table-column fixed="right" label="操作" width="80">
+              <template slot-scope="scope">
+                <el-button @click.native.prevent="deleteRow(scope.$index, tableData_monitor)" type="text" size="medium">移除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+        <!-- 遥控 -->
+        <el-col :span="3">
+          遥控
+          <div id="zone_joystick" style="position: relative; margin-top: 90px"></div>
+        </el-col>
+        <!-- x小车速度图表 -->
+        <el-col :span="5" class="row-DeviceConnectionButton">
+          <div id="echartSpeed" style="width: 100%; height: 100%"></div>
+          <!-- <el-row :gutter="18">
+                    <div style="margin-top: 20px">
+                        <span class="tag-group__title">任务完成度</span>
+                        <el-tag style="margin-left: 20px" effect="dark">UAV1</el-tag>
+                        <el-tag style="margin-left: 20px" type="success" effect="dark">UAV2</el-tag>
+                        <el-tag style="margin-left: 20px" type="warning" effect="dark">UAV3</el-tag>
+                    </div>
+                </el-row>
+                <el-row :gutter="18">
+                    <el-progress :text-inside="true" :stroke-width="20" :percentage="10" style="margin: 20px"></el-progress>
+                    <el-progress :text-inside="true" :stroke-width="20" :percentage="10" style="margin: 20px" status="success"></el-progress>
+                    <el-progress :text-inside="true" :stroke-width="20" :percentage="10" style="margin: 20px" status="warning"></el-progress>
+        </el-row>-->
+        </el-col>
+      </el-row>
+    </div>
     <!-- 新增 -->
     <!-- <div v-if="dialogAddEditVisible">
       <el-dialog width="50%" :title="addEditTitle" :visible.sync="dialogAddEditVisible">
@@ -111,10 +134,11 @@
   import Ros3dPath from "vue-ros3djs/src/lib-components/Ros3dPath.vue";
   //组件
   import mapView from "@/components/mapComponent/index.vue";
+  import mapToolMenu from "@/components/mapToolMenu/index.vue";
   import { postApi, getApi, delApi } from "@/api/request";
   export default {
     name: "",
-    components: { Ros3dViewer, Ros3dGrid, Ros3dAxes, Ros3dLaserScan, Ros3dPointCloud2, Ros3dPath, mapView },
+    components: { Ros3dViewer, Ros3dGrid, Ros3dAxes, Ros3dLaserScan, Ros3dPointCloud2, Ros3dPath, mapView, mapToolMenu },
     data() {
       return {
         addEditTitle: "",
@@ -159,8 +183,6 @@
         this.ros = new ROSLIB.Ros({
           //需改成小车的ip
           //url: "ws://" + this.form.EquipmentIP + ":9090",
-          //url: "ws://" + this.car_one_ip + ":9090",
-          //url: "ws://"+this.car_one_ip+":9090",
           url: "ws://192.168.134.128:9090",
         });
         this.ros.on("connection", () => {
@@ -191,50 +213,11 @@
           interval: 200,
           quality: 200,
         });
-
-        //接收ros发布的image topic2
-        var viewerTwo = new MJPEGCANVAS.Viewer({
-          divID: "mjpegTwo",
-          host: this.car_one_ip,
-          width: 330,
-          height: 250,
-          topic: this.imageTwo_topic,
-          interval: 200,
-          quality: 200,
-        });
-
-        //其他话题数据
-        //  * /Odometry [nav_msgs/Odometry]里程计（飞机的位置）
-        //  * /clock [rosgraph_msgs/Clock]
-        //  * /cloud_registered [sensor_msgs/PointCloud2]点云
-        //  * /diagnostics [diagnostic_msgs/DiagnosticArray]mavroos诊断信息 -- 叠加地图显示
-        //  * /iris_0/mavros/altitude [mavros_msgs/Altitude]姿态 -- https://sebmatton.github.io/flightindicators/
-        //  * /iris_0/mavros/battery [sensor_msgs/BatteryState]电池状态
-        //  * /iris_0/mavros/global_position/global [sensor_msgs/NavSatFix]全局位置
-        //  * /iris_0/mavros/imu/data [sensor_msgs/Imu]IMU
-        //  * /iris_0/mavros/imu/data_raw [sensor_msgs/Imu]原始IMU
-        //  * /iris_0/mavros/imu/mag [sensor_msgs/MagneticField]磁罗盘
-        //  * /iris_0/mavros/local_position/odom [nav_msgs/Odometry]自身位置
-        //  * /iris_0/mavros/state [mavros_msgs/State]状态
-        //  * /iris_0/mavros/sys_status [mavros_msgs/SysStatus]飞控状态
-        //  * /iris_0/mavros/vfr_hud [mavros_msgs/VFR_HUD]地面站HUD
-        //  * /iris_0/stereo_camera/right/image_raw [sensor_msgs/Image]摄像头
-        //  * /iris_0/velodyne_points [sensor_msgs/PointCloud2]激光雷达原始点云
-        //  * /planning/pos_cmd [quadrotor_msgs/PositionCommand]规划算法输出轨迹
-        // var imu = new ROSLIB.Topic({
-        //   ros: this.ros,
-        //   name: "/iris_0/mavros/imu/data",
-        //   messageType: "sensor_msgs/Imu",
-        // });
         var battery = new ROSLIB.Topic({
           ros: this.ros,
           name: "/iris_0/mavros/altitude",
           messageType: "mavros_msgs/Altitude",
         });
-
-        // imu.subscribe((msg) => {
-        //   console.log("IMUdata========", msg);
-        // });
         battery.subscribe((msg) => {
           console.log("Batterydata========", msg);
         });
@@ -279,6 +262,14 @@
       .map {
         height: 100%;
         width: 40%;
+        position: relative;
+        .map-tool-menu {
+          position: absolute;
+          top: 80px;
+          left: 12px;
+          width: 30px;
+          height: 300px;
+        }
       }
       .lidar {
         height: 100%;
@@ -304,6 +295,23 @@
     .control {
       border: 3px solid #dfe4ed;
       height: 30%;
+      width: 100%;
+      .row-DeviceConnection {
+        background-color: white;
+        border: 1px solid #dfe4ed;
+        height: 95%;
+        margin: 5px !important;
+        border: 1px solid #dfe4ed;
+        box-shadow: 0px 0px 2px 2px lightgrey;
+        .row-DeviceConnectionButton {
+          overflow: auto;
+          background-color: white;
+          height: 100%;
+          margin: 1px 1px 1px 1px !important;
+          border: 2px solid #dfe4ed;
+          box-shadow: 0px 0px;
+        }
+      }
     }
 
     /deep/.el-dialog__wrapper {

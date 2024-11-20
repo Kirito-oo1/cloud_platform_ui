@@ -1,11 +1,8 @@
-<!--
- * @Author: 大地测绘ZZY
- * @Date: 2023-03-03 15:00:13
- * @LastEditors: Zhiyu Zheng
- * @LastEditTime: 2023-06-05 09:33:32
- * @FilePath: \dd-space-ui\src\components\main\sys\user\user-form.vue
- * @company: 西安大地测绘股份有限公司
- * @description: 用户管理新增&修改页
+<!-- 
+ * @Author:Zhiyu Zheng
+ * @Company: 首都师范大学
+ * @LastEditTime: 2024-11-01 16:00
+ * @Description: 系统首页
 -->
 <template>
   <el-dialog :title="!form.userId ? '新增' : '修改'" :visible.sync="visible" :close-on-click-modal="false" :before-close="closeDialog">

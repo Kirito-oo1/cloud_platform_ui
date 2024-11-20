@@ -11,6 +11,8 @@
 <script>
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
+  import "leaflet.pm";
+  import "leaflet.pm/dist/leaflet.pm.css";
 
   export default {
     name: "mapView",
@@ -18,8 +20,11 @@
       return {
         //实例化地图
         map: null,
-        //图层列表
-        layerList: [],
+        //绘制图层
+        rectangleLayer: "",
+        rectangleGeoJson: "",
+        //任务区
+        mission_layer_point_arr: [],
       };
     },
     mounted() {
@@ -28,17 +33,13 @@
       //   //监听鼠标事件
       //   this.search();
       //接收地图工具栏数据
-      this.$bus.$on("LayerToolId", (data) => {
-        if (data.id == 8) {
-          this.handleViewClear();
-        } else {
-          this.handleLayerTool(data);
-        }
+      this.$bus.$on("mapToolId", (data) => {
+        this.handleMapTool(data);
       });
     },
     beforeDestroy() {
       //组件卸载之前,解绑事件总线事件
-      this.$bus.$off("LayerToolId");
+      this.$bus.$off("mapToolId");
     },
     methods: {
       //创建地图
@@ -59,58 +60,71 @@
           // "http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}"
           // "http://t4.tianditu.com/DataServer?T=cva_w&tk=5a257cd2df1b3311723bd77b0de14baf&x={x}&y={y}&l={z}",
         ).addTo(this.map);
+
+        // leaflet.pm插件
         //设置语言
         this.map.pm.setLang("zh");
+        // 监听创建图形
+        this.map.on("pm:create", (e) => {
+          // 记录当前绘制的图形
+          this.rectangleGeoJson = e.layer.toGeoJSON();
+          this.rectangleLayer = e.layer;
+        });
+        // 监听删除图形
+        this.map.on("pm:remove", (e) => {
+          console.log("删除了该区域");
+        });
       },
       //地图功能
-      handleLayerTool(value) {
-        //初始化清除
-        this.isIdentifyLayer = false;
-        this.isQueryLayer = false;
+      handleMapTool(value) {
+        if (value == 2) {
+          // 设置多边形的颜色
+          const polygonOptions = {
+            templineStyle: {},
+            // the line from the last marker to the mouse cursor
+            hintlineStyle: {},
+            pathOptions: {
+              color: "green",
+              fillColor: "blue",
+              fillOpacity: 0.1,
+            },
+          };
 
-        //测距
-        if (value.id == 6 && value.select) {
-          this.$message.warning("随时可以按下ESC取消测量");
-          handleMeasures.measureLength(view);
-        } else if (value.id == 6 && !value.select) {
-          handleMeasures.clearMeasures(view);
-        }
-        //测面
-        if (value.id == 7 && value.select) {
-          this.$message.warning("随时可以按下ESC取消测量");
-          handleMeasures.measureArea(view);
-        } else if (value.id == 7 && !value.select) {
-          handleMeasures.clearMeasures(view);
-        }
-        //全屏
-        if (value.id == 9) {
-          this.$nextTick(() => {
-            //指定全屏区域元素
-            let ele = document.getElementById("main_wrap");
-            screenfull.toggle(ele);
+          this.map.pm.enableDraw("Polygon", polygonOptions);
+
+          this.rectangleLayer = this.map.pm.enableDraw("Polygon", {
+            snappable: true, // 启用捕捉到其他绘制图形的顶点
+            snapDistance: 20, // 顶点捕捉距离
+          });
+          this.map.on("pm:create", (e) => {
+            let target = [];
+            const shape = e.shape;
+            // 多边形
+            if (shape === "Polygon" || shape === "Rectangle") {
+              // 处理绘制完成的逻辑
+              this.map.fitBounds(e.layer._latlngs); // 聚焦到选择的区域
+              console.log(e.layer._latlngs);
+
+              e.layer._latlngs[0].forEach((item) => {
+                let arr = [item.lng, item.lat];
+                target.push(arr);
+              });
+              // for (let i = 0; i < e.layer._latlngs[0].length; i++) {
+              //   let arr = [this.LatLngjson[i].lng, this.LatLngjson[i].lat];
+              //   target.push(arr);
+              // }
+            }
+            this.mission_layer_point_arr = target;
+            this.map.off("pm:create");
           });
         }
-        //复位
-        if (value.id == 10) {
-          handleMap.zoomTo(view, [109.0611612, 34.5096216], 10);
-        }
-        //放大
-        if (value.id == 11) {
-          zoom.zoomIn();
-        }
-        //缩小
-        if (value.id == 12) {
-          zoom.zoomOut();
+        if (value == 5) {
+          this.handleLayerClear();
         }
       },
       //地图清除
-      handleViewClear() {
-        handleMeasures.clearMeasures(view);
-        let focusLayer = this.map.findLayerById("focusLayer");
-        if (focusLayer) {
-          focusLayer.removeAll();
-        }
-        this.$bus.$emit("LayerQueryed", []);
+      handleLayerClear() {
+        this.map.removeLayer(this.rectangleLayer);
       },
     },
   };

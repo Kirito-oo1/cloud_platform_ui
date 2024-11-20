@@ -30,15 +30,11 @@ const routes = [
         component: () => import("@/views/HomeView/main/dataVisual/index.vue"),
         children: [
           {
-            path: "/dataVisual/archivedData",
+            path: "/dataVisual/dataShow",
             name: "数据展示",
-            component: () => import("@/views/HomeView/main/dataVisual/archivedData/index.vue"),
+            component: () => import("@/views/HomeView/main/dataVisual/dataShow/index.vue"),
           },
-          {
-            path: "/dataVisual/resultsData",
-            name: "设备管理",
-            component: () => import("@/views/HomeView/main/dataVisual/resultsData/index.vue"),
-          },
+
           {
             path: "/dataVisual/uvaDemo",
             name: "无人机展示",
@@ -51,6 +47,11 @@ const routes = [
         name: "系统管理",
         component: () => import("@/views/HomeView/main/sys/index.vue"),
         children: [
+          {
+            path: "/sys/equipment",
+            name: "设备管理",
+            component: () => import("@/views/HomeView/main/sys/equipment/index.vue"),
+          },
           {
             path: "/sys/user",
             name: "用户管理",
