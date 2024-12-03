@@ -11,6 +11,8 @@
     "core-js": "^3.8.3",
     "echarts": "^5.5.1",
     "element-ui": "^2.15.14",
+    "exif-js": "^2.3.0",
+    "file-saver": "^2.0.5",
     "jquery": "^3.7.1",
     "leaflet": "^1.9.4",
     "leaflet.pm": "^2.2.0",
@@ -31,5 +33,8 @@
     "@vue/cli-plugin-vuex": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "vue-template-compiler": "^2.6.14"
+  },
+  "globals": {
+    "Cesium": true
   }
 }

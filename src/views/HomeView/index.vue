@@ -33,46 +33,68 @@
       return {
         menuList: [
           {
-            name: "首页",
+            name: "系统首页",
             url: "/systemHome",
             icon: "icon-shouye",
             list: [],
           },
           {
-            name: "数据可视化",
-            url: "/dataVisual",
+            name: "系统功能",
+            url: "/systemFunction",
             icon: "icon-ditu",
             list: [
               {
-                name: "数据展示",
-                url: "/dataVisual/dataShow",
+                name: "任务规划",
+                url: "/systemFunction/missionPlanner",
                 icon: "icon-ditu",
               },
               {
-                name: "无人机展示",
-                url: "/dataVisual/uvaDemo",
+                name: "多机SLAM",
+                url: "/systemFunction/slamPointCloud",
+                icon: "icon-ditu",
+              },
+              {
+                name: "图像拼接",
+                url: "/systemFunction/pictureMerge",
+                icon: "icon-ditu",
+              },
+            ],
+          },
+          {
+            name: "设备可视化",
+            url: "/equipmentVisual",
+            icon: "icon-ditu",
+            list: [
+              {
+                name: "无人设备展示",
+                url: "/equipmentVisual/unmannedEquipment",
+                icon: "icon-ditu",
+              },
+              {
+                name: "首师大无人机",
+                url: "/equipmentVisual/cnuUVA",
                 icon: "icon-ditu",
               },
             ],
           },
           {
             name: "系统管理",
-            url: "/sys",
+            url: "/system",
             icon: "icon-xitongguanli-",
             list: [
               {
                 name: "设备管理",
-                url: "/sys/equipment",
+                url: "/system/equipment",
                 icon: "icon-ditu",
               },
               {
                 name: "用户管理",
-                url: "/sys/user",
+                url: "/system/user",
                 icon: "icon-yonghuguanli",
               },
               {
                 name: "日志管理",
-                url: "/sys/log",
+                url: "/system/log",
                 icon: "icon-rizhiguanli",
               },
             ],

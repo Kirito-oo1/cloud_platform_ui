@@ -3,7 +3,7 @@ import router from "../router/index.js";
 
 //公共配置
 const axiosSetting = axios.create({
-  timeout: 5000, // 默认超时设置5s
+  timeout: 500000, // 默认超时设置5s
   baseURL: "", // 相对路径设置
 });
 

@@ -1,3 +1,11 @@
+<!--
+ * @Author: Zhiyu Zheng
+ * @Date: 2024-10-18 22:40:30
+ * @LastEditors: Zhiyu Zheng
+ * @LastEditTime: 2024-12-03 19:47:56
+ * @FilePath: \cloud_platform_ui\src\views\Login\index.vue
+ * @Description: 登录页
+-->
 <template>
   <div class="login">
     <div class="headerTextBox">

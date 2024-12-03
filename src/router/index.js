@@ -11,56 +11,79 @@ const routes = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/views/Login/index.vue"), //异步加载 优化页面速度
+    component: () => import("@/views/Login"), //异步加载 优化页面速度
   },
   {
     path: "/home",
     name: "home",
-    component: () => import("@/views/HomeView/index.vue"),
+    component: () => import("@/views/HomeView"),
     redirect: "/systemHome",
     children: [
       {
         path: "/systemHome",
-        name: "首页",
-        component: () => import("@/views/HomeView/main/systemHome/index.vue"),
+        name: "系统首页",
+        component: () => import("@/views/HomeView/main/systemHome"),
       },
       {
-        path: "/dataVisual",
-        name: "数据可视化",
-        component: () => import("@/views/HomeView/main/dataVisual/index.vue"),
+        path: "/systemFunction",
+        name: "系统功能",
+        component: () => import("@/views/HomeView/main/systemFunction"),
         children: [
           {
-            path: "/dataVisual/dataShow",
-            name: "数据展示",
-            component: () => import("@/views/HomeView/main/dataVisual/dataShow/index.vue"),
+            path: "/systemFunction/missionPlanner",
+            name: "任务规划",
+            component: () => import("@/views/HomeView/main/systemFunction/missionPlanner"),
           },
 
           {
-            path: "/dataVisual/uvaDemo",
-            name: "无人机展示",
-            component: () => import("@/views/HomeView/main/dataVisual/uvaDemo/index.vue"),
+            path: "/systemFunction/slamPointCloud",
+            name: "多机SLAM",
+            component: () => import("@/views/HomeView/main/systemFunction/slamPointCloud"),
+          },
+          {
+            path: "/systemFunction/pictureMerge",
+            name: "图像拼接",
+            component: () => import("@/views/HomeView/main/systemFunction/pictureMerge"),
           },
         ],
       },
       {
-        path: "/sys",
-        name: "系统管理",
-        component: () => import("@/views/HomeView/main/sys/index.vue"),
+        path: "/equipmentVisual",
+        name: "设备可视化",
+        component: () => import("@/views/HomeView/main/equipmentVisual"),
         children: [
           {
-            path: "/sys/equipment",
+            path: "/equipmentVisual/unmannedEquipment",
+            name: "无人设备展示",
+            component: () => import("@/views/HomeView/main/equipmentVisual/unmannedEquipment"),
+          },
+
+          {
+            path: "/equipmentVisual/cnuUVA",
+            name: "首师大无人机",
+            component: () => import("@/views/HomeView/main/equipmentVisual/cnuUVA"),
+          },
+        ],
+      },
+      {
+        path: "/system",
+        name: "系统管理",
+        component: () => import("@/views/HomeView/main/system"),
+        children: [
+          {
+            path: "/system/equipment",
             name: "设备管理",
-            component: () => import("@/views/HomeView/main/sys/equipment/index.vue"),
+            component: () => import("@/views/HomeView/main/system/equipment"),
           },
           {
-            path: "/sys/user",
+            path: "/system/user",
             name: "用户管理",
-            component: () => import("@/views/HomeView/main/sys/user/index.vue"),
+            component: () => import("@/views/HomeView/main/system/user"),
           },
           {
-            path: "/sys/log",
+            path: "/system/log",
             name: "日志管理",
-            component: () => import("@/views/HomeView/main/sys/log/index.vue"),
+            component: () => import("@/views/HomeView/main/system/log"),
           },
         ],
       },

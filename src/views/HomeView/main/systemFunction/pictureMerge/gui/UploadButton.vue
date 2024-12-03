@@ -1,0 +1,215 @@
+<template>
+  <div class="upload-btn">
+    <input :id="id" type="file" :name="name" :value="value" :accept="accept" :multiple="isMultiple" @change="fileChanged" @click="fileSelectionStarted" @focus="inputFocus" />
+    <label :for="id" :class="`el-button ${classes} upload-btn`" :style="{ padding: '0', margin: '0', 'text-transform': 'none !important', color: 'black' }">
+      <slot name="icon-left" />
+      {{ icon ? "" : title }}
+      <slot name="icon" />
+    </label>
+  </div>
+</template>
+
+<script>
+  import { UserAgentInfo } from "@/utils/UserAgentInfo";
+
+  export default {
+    props: {
+      accept: {
+        default: "*",
+        type: String,
+      },
+      block: {
+        default: false,
+        type: Boolean,
+      },
+      depressed: {
+        default: false,
+        type: Boolean,
+      },
+      fileChangedCallback: {
+        default: undefined,
+        type: Function,
+      },
+      color: {
+        default: "primary",
+        type: String,
+      },
+      disabled: {
+        default: false,
+        type: Boolean,
+      },
+      flat: {
+        default: false,
+        type: Boolean,
+      },
+      hover: {
+        default: true,
+        type: Boolean,
+      },
+      icon: {
+        default: false,
+        type: Boolean,
+      },
+      large: {
+        default: false,
+        type: Boolean,
+      },
+      loading: {
+        default: false,
+        type: Boolean,
+      },
+      multiple: {
+        default: false,
+        type: Boolean,
+      },
+      name: {
+        default: "uploadFile",
+        type: String,
+      },
+      outline: {
+        default: false,
+        type: Boolean,
+      },
+      ripple: {
+        default: true,
+        type: Boolean,
+      },
+      round: {
+        default: false,
+        type: Boolean,
+      },
+      small: {
+        default: false,
+        type: Boolean,
+      },
+      title: {
+        default: "Upload",
+        type: String,
+      },
+      uniqueId: {
+        default: false,
+        type: Boolean,
+      },
+    },
+    computed: {
+      id() {
+        return this.uniqueId ? `${this._uid}uploadFile` : "uploadFile";
+      },
+      classes() {
+        const classes = {
+          "el-button--block": this.block,
+          "el-button--flat": this.flat,
+          "upload-btn-hover": this.hover,
+          "el-button--icon": this.icon,
+          "el-button--large": this.large,
+          "el-button--loading": this.loading,
+          "el-button--outline": this.outline,
+          "el-button--round": this.round,
+          "el-button--small": this.small,
+          "el-button--disabled": this.disabled,
+          "el-button--depressed": this.depressed,
+        };
+        let classString = "";
+        for (let key in classes) {
+          if (classes[key]) {
+            classString += `${key} `;
+          }
+        }
+        return classString;
+      },
+      isMultiple() {
+        return this.multiple && !UserAgentInfo.instance.isGeckoOnAndroid();
+      },
+    },
+    data() {
+      return {
+        value: "",
+        fileChangedCalled: false,
+        inputClicked: false,
+      };
+    },
+    methods: {
+      fileChanged(e) {
+        this.fileChangedCalled = true;
+        this.fileSelectionStarted();
+        if (e) {
+          if (this.fileChangedCallback) {
+            if (e.target.files) {
+              if (this.multiple && !this.isMultiple && e.target.files[0]) {
+                this.fileChangedCallback([e.target.files[0]]);
+              } else if (this.isMultiple) {
+                this.fileChangedCallback(e.target.files);
+              } else if (!this.multiple && e.target.files[0]) {
+                this.fileChangedCallback(e.target.files[0]);
+              } else {
+                this.fileChangedCallback(null);
+              }
+            } else {
+              this.fileChangedCallback(null);
+            }
+            this.value = "";
+          }
+        }
+        this.fileSelectionEnded();
+      },
+      fileSelectionStarted() {
+        this.inputClicked = true;
+        if (UserAgentInfo.instance.isGeckoOnAndroid()) {
+          return;
+        }
+        this.$emit("file-selection-started");
+        // a hack, don't know a way to detect if the user canceled the file dialog.
+        // setTimeout(() => {
+        //   if(!this.fileChangedCalled) {
+        //     this.fileSelectionEnded();
+        //   }
+        // }, 7000);
+      },
+      fileSelectionEnded() {
+        if (UserAgentInfo.instance.isGeckoOnAndroid()) {
+          return;
+        }
+
+        this.$emit("file-selection-ended");
+        this.fileChangedCalled = false;
+      },
+      inputFocus() {
+        if (UserAgentInfo.instance.isGeckoOnAndroid()) {
+          return;
+        }
+        if (this.inputClicked) {
+          this.inputClicked = false;
+          setTimeout(() => {
+            if (!this.fileChangedCalled) {
+              this.fileSelectionEnded();
+            }
+          }, 4000);
+        }
+      },
+    },
+    beforeDestroy() {
+      if (UserAgentInfo.instance.isGeckoOnAndroid()) {
+        return;
+      }
+      this.$emit("file-selection-ended");
+    },
+  };
+</script>
+
+<style scoped>
+  .upload-btn {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .upload-btn input[type="file"] {
+    position: absolute;
+    height: 0.1px;
+    width: 0.1px;
+    overflow: hidden;
+    opacity: 0;
+    z-index: -1;
+  }
+  .upload-btn-hover {
+    cursor: pointer;
+  }
+</style>
