@@ -58,6 +58,16 @@
                 url: "/systemFunction/pictureMerge",
                 icon: "icon-ditu",
               },
+              {
+                name: "手持设备",
+                url: "/systemFunction/handheld_device",
+                icon: "icon-ditu",
+              },
+              {
+                name: "高斯模型",
+                url: "/systemFunction/gaussianModel",
+                icon: "icon-ditu",
+              },
             ],
           },
           {

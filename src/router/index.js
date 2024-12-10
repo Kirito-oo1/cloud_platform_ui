@@ -45,6 +45,16 @@ const routes = [
             name: "图像拼接",
             component: () => import("@/views/HomeView/main/systemFunction/pictureMerge"),
           },
+          {
+            path: "/systemFunction/handheld_device",
+            name: "手持设备",
+            component: () => import("@/views/HomeView/main/systemFunction/handheld_device"),
+          },
+          {
+            path: "/systemFunction/gaussianModel",
+            name: "高斯模型",
+            component: () => import("@/views/HomeView/main/systemFunction/gaussianModel"),
+          },
         ],
       },
       {
