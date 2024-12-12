@@ -1,7 +1,7 @@
 <!-- 
  * @Author:Zhiyu Zheng
  * @Company: 首都师范大学
- * @LastEditTime: 2024-11-13 17:00
+ * @LastEditTime: 2024-12-12 23:07:33
  * @Description: 陀螺仪：IMU可视化
 -->
 <template>
@@ -23,7 +23,6 @@
     mounted() {
       this.createIndicator();
       this.$bus.$on("IMUdata", (data) => {
-        console.log("IMUdata", data);
         this.updateIndicator(data);
       });
     },
