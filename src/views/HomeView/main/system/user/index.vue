@@ -1,15 +1,15 @@
 <!-- 
  * @Author:Zhiyu Zheng
  * @Company: 首都师范大学
- * @LastEditTime: 2024-11-01 16:00
- * @Description: 系统首页
+ * @LastEditTime: 2024-12-12 17:50:52
+ * @Description: 用户管理
 -->
 <template>
   <div class="container">
     <div class="head_wrap">
       <div class="search_wrap">
         <div class="input_wrap">
-          <el-input placeholder="请输入用户名" v-model="username" clearable></el-input>
+          <el-input placeholder="请输入用户名" v-model="searchUserName" clearable></el-input>
         </div>
         <el-button type="primary" class="ml5" @click="handleSearch">查询</el-button>
         <el-button type="primary" @click="handleReset">重置</el-button>
@@ -18,47 +18,28 @@
     </div>
     <div class="table_wrap">
       <el-table :data="tableData" border style="width: 100%" height="640">
-        <el-table-column type="index" label="序号" width="50"></el-table-column>
-        <el-table-column prop="username" label="用户名" width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column label="昵称" width="100" show-overflow-tooltip>
+        <el-table-column type="index" label="序号" width="100"></el-table-column>
+        <el-table-column prop="username" label="用户名" width="200" show-overflow-tooltip></el-table-column>
+        <el-table-column label="昵称" width="200" show-overflow-tooltip>
           <template slot-scope="scope">
             <span v-if="scope.row.nick">{{ scope.row.nick }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="roleNameList" label="角色">
-          <template slot-scope="scope">
-            <div class="tagList">
-              <el-tag size="small" v-for="item in scope.row.roleNameList" :key="item">{{ item }}</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="areaNames" label="所属行政区">
-          <template slot-scope="scope">
-            <div class="tagList">
-              <el-tag size="small" v-for="item in scope.row.areaNames" :key="item">{{ item }}</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="deptName" label="所属部门" show-overflow-tooltip></el-table-column>
-        <el-table-column label="邮箱" width="200">
+        <el-table-column prop="roleName" label="角色" width="200"> </el-table-column>
+        <el-table-column label="邮箱" width="300">
           <template slot-scope="scope">
             <span v-if="scope.row.email">{{ scope.row.email }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="手机号" width="180">
+        <el-table-column label="手机号" width="300">
           <template slot-scope="scope">
             <span v-if="scope.row.mobile">{{ scope.row.mobile }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="120">
-          <template slot-scope="scope">
-            <el-switch v-model="scope.row.status" @change="handleSwitch($event, scope.row)"></el-switch>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button @click="handleAuthority(scope.row)" type="text" size="small">修改密码</el-button>
             <el-button @click="addOrUpdateHandle(true, scope.row.userId)" type="text" size="small">编辑</el-button>
@@ -94,7 +75,7 @@
     computed: {},
     data() {
       return {
-        username: "",
+        searchUserName: "",
         tableData: [],
         current: 1,
         size: 10,
@@ -111,20 +92,19 @@
     methods: {
       // 获取用户信息
       getUserData() {
-        let { username, current, size } = this;
-        let params = {
-          username,
-          current,
-          size,
-        };
-        postApi(`/sys/user/list`, params).then((res) => {
-          let { data } = res;
-          data.records.forEach((item) => {
-            item.status = item.status ? false : true;
-          });
-          this.tableData = data.records;
-          this.total = data.total;
-        });
+        // postApi(`/sys/user/list`, params).then((res) => {
+        //   let { data } = res;
+        //   data.records.forEach((item) => {
+        //     item.status = item.status ? false : true;
+        //   });
+        //   this.tableData = data.records;
+        //   this.total = data.total;
+        // });
+        this.tableData = [
+          { userId: "123", username: "admin", nick: "管理员", roleId: 1, roleName: "管理员", mobile: "18812340000", email: "zzy@cnu.edu.com" },
+          { userId: "124", username: "user01", nick: "小郑", roleId: 2, roleName: "用户", mobile: "18800002233", email: "" },
+          { userId: "125", username: "user02", nick: "小诗", roleId: 2, roleName: "用户", mobile: "", email: "dsq@cnu.edu.com" },
+        ];
       },
       /* 搜索栏 */
       handleSearch() {
@@ -133,7 +113,7 @@
       },
       /* 重置 */
       handleReset() {
-        this.username = "";
+        this.searchUserName = "";
         this.current = 1;
         this.getUserData();
       },

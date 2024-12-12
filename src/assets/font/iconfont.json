@@ -6,53 +6,151 @@
   "description": "s's'd",
   "glyphs": [
     {
-      "icon_id": "7429",
-      "name": "首页",
-      "font_class": "shouye",
+      "icon_id": "4388186",
+      "name": "系统管理",
+      "font_class": "xitongguanli1",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "857684",
+      "name": "角色管理",
+      "font_class": "yidongyunkongzhitaiicon45",
+      "unicode": "e74a",
+      "unicode_decimal": 59210
+    },
+    {
+      "icon_id": "1320054",
+      "name": "用户管理",
+      "font_class": "yonghuguanli",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "4960610",
+      "name": "设备管理",
+      "font_class": "shebeiguanli",
+      "unicode": "e684",
+      "unicode_decimal": 59012
+    },
+    {
+      "icon_id": "6232713",
+      "name": "barrier",
+      "font_class": "barrier",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "6587132",
+      "name": "高斯混合",
+      "font_class": "gaosihunhe",
+      "unicode": "e8b7",
+      "unicode_decimal": 59575
+    },
+    {
+      "icon_id": "6953098",
+      "name": "手持手机01",
+      "font_class": "thin-_mobile_iph",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "7966483",
+      "name": "信息表",
+      "font_class": "xinxibiao",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "10056245",
+      "name": "取消",
+      "font_class": "quxiao",
+      "unicode": "e709",
+      "unicode_decimal": 59145
+    },
+    {
+      "icon_id": "10093884",
+      "name": "拼接",
+      "font_class": "pinjie",
+      "unicode": "e6c1",
+      "unicode_decimal": 59073
+    },
+    {
+      "icon_id": "10208932",
+      "name": "多机位",
+      "font_class": "duojiwei",
+      "unicode": "e6a8",
+      "unicode_decimal": 59048
+    },
+    {
+      "icon_id": "12694033",
+      "name": "日志管理",
+      "font_class": "rizhiguanli",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "12820191",
+      "name": "系统首页",
+      "font_class": "xitongshouye",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "12889886",
+      "name": "系统管理",
+      "font_class": "xitongguanli",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "14008818",
+      "name": "绘制",
+      "font_class": "huizhi",
       "unicode": "e600",
       "unicode_decimal": 58880
     },
     {
-      "icon_id": "493564",
-      "name": "地图",
-      "font_class": "ditu",
-      "unicode": "e7ba",
-      "unicode_decimal": 59322
+      "icon_id": "19986176",
+      "name": "起点",
+      "font_class": "qidian",
+      "unicode": "e7b5",
+      "unicode_decimal": 59317
     },
     {
-      "icon_id": "3101169",
-      "name": "向左收起",
-      "font_class": "xiangzuoshouqi",
-      "unicode": "e619",
-      "unicode_decimal": 58905
+      "icon_id": "25063546",
+      "name": "调度任务规划",
+      "font_class": "tiaodurenwuguihua",
+      "unicode": "e607",
+      "unicode_decimal": 58887
     },
     {
-      "icon_id": "5387585",
-      "name": "箭头_向右两次",
-      "font_class": "jiantou_xiangyouliangci",
-      "unicode": "eb09",
-      "unicode_decimal": 60169
+      "icon_id": "27662045",
+      "name": "无人车",
+      "font_class": "wurenche",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
     },
     {
-      "icon_id": "12547687",
-      "name": "系统管理",
-      "font_class": "xitongguanli-",
-      "unicode": "e617",
-      "unicode_decimal": 58903
+      "icon_id": "31121553",
+      "name": "系统功能管理",
+      "font_class": "xitonggongnengguanli",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
     },
     {
-      "icon_id": "16080009",
-      "name": "用户管理",
-      "font_class": "yonghuguanli",
-      "unicode": "e688",
-      "unicode_decimal": 59016
+      "icon_id": "39822707",
+      "name": "可视化",
+      "font_class": "a-visualizeddashboard",
+      "unicode": "e875",
+      "unicode_decimal": 59509
     },
     {
-      "icon_id": "24848479",
-      "name": "日志管理",
-      "font_class": "rizhiguanli",
-      "unicode": "e639",
-      "unicode_decimal": 58937
+      "icon_id": "40531491",
+      "name": "无人机",
+      "font_class": "wurenji",
+      "unicode": "e6be",
+      "unicode_decimal": 59070
     }
   ]
 }
