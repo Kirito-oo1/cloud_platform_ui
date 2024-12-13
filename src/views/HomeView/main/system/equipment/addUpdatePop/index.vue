@@ -2,384 +2,279 @@
   <div class="pop_container">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="form_wrap">
       <el-row :gutter="20">
+        <!-- 设备名称 -->
         <el-col :span="12">
-          <el-form-item label="项目来源" :prop="type != 2 ? 'source' : ''" class="select_wrap">
-            <el-select v-if="type != 2" v-model="ruleForm.source" clearable placeholder="请选择项目来源">
-              <el-option :label="item.name" :value="item.value" v-for="item in proSourceList" :key="item.value"></el-option>
-            </el-select>
-            <span else>
-              <span style="margin-left: -15px">:</span>
-              {{ ruleForm.sourceName }}
-            </span>
-          </el-form-item>
-          <el-form-item label="关联项目" :prop="type != 2 ? 'name' : ''" class="select_wrap">
-            <span v-if="ruleForm.source && type != 2">
-              <el-select
-                popper-class="select_popper"
-                :popper-append-to-body="false"
-                v-if="type != 2"
-                v-model="ruleForm.name"
-                clearable
-                filterable
-                placeholder="请选择关联项目"
-                value-key="code"
-                @change="handleConnectPro"
-              >
-                <el-option v-for="item in connectProList" :key="item.code" :label="item.name" :value="item">
-                  <div :title="item.name" style="float: left; width: 100%" class="text_ellipsis">
-                    {{ item.name }}
-                  </div>
-                </el-option>
-              </el-select>
-            </span>
-            <span v-if="!ruleForm.source && type != 2">
-              <el-input v-model="ruleForm.name" style="width: 72%" placeholder="填写关联项目名称"></el-input>
-            </span>
-
-            <span v-if="type == 2">
+          <el-form-item label="设备名称">
+            <el-input v-if="type !== 2" v-model="ruleForm.name" clearable placeholder="请输入设备名称"></el-input>
+            <span v-else>
               <span style="margin-left: -15px">:</span>
               {{ ruleForm.name }}
             </span>
           </el-form-item>
-          <el-form-item label="项目年份" prop="proYear">
-            <el-input v-if="type != 2" v-model="ruleForm.proYear" :disabled="ruleForm.source ? true : false" style="width: 72%" placeholder="选择关联项目自动带出"></el-input>
-            <span v-else>
-              <span style="margin-left: -15px">:</span>
-              {{ ruleForm.proYear }}
-            </span>
-          </el-form-item>
-          <el-form-item label="行政区" :prop="type != 2 ? 'areaCode' : ''">
-            <el-cascader v-if="type != 2" v-model="ruleForm.areaCode" :options="districtList" :show-all-levels="false" :props="props" clearable @change="handleAreaCodeChange"></el-cascader>
-            <span v-else>
-              <span style="margin-left: -15px">:</span>
-              {{ ruleForm.areaName }}
-            </span>
-          </el-form-item>
         </el-col>
+
+        <!-- 设备编号 -->
         <el-col :span="12">
-          <el-form-item label="项目类型" :prop="type != 2 ? 'proType' : ''">
-            <el-cascader v-if="type != 2" v-model="ruleForm.proType" :options="projectTypeList" :show-all-levels="false" :props="props" clearable @change="handleProTypeChange"></el-cascader>
+          <el-form-item label="设备编号">
+            <el-input v-if="type !== 2" v-model="ruleForm.id" clearable placeholder="请输入设备编号"></el-input>
             <span v-else>
               <span style="margin-left: -15px">:</span>
-              {{ ruleForm.proTypeName }}
-            </span>
-          </el-form-item>
-          <el-form-item label="项目编码" prop="code">
-            <el-input v-if="type != 2" v-model="ruleForm.code" :disabled="ruleForm.source ? true : false" style="width: 72%" placeholder="选择关联项目自动带出"></el-input>
-            <span v-else>
-              <span style="margin-left: -15px">:</span>
-              {{ ruleForm.code }}
-            </span>
-          </el-form-item>
-          <el-form-item label="开始日期" prop="beginTime">
-            <el-input v-if="type != 2" v-model="ruleForm.beginTime" :disabled="ruleForm.source ? true : false" style="width: 72%" placeholder="选择关联项目自动带出"></el-input>
-            <span v-else>
-              <span style="margin-left: -15px">:</span>
-              {{ ruleForm.beginTime }}
-            </span>
-          </el-form-item>
-          <el-form-item label="开发区" :prop="type != 2 ? 'orgId' : ''">
-            <el-cascader
-              v-if="type != 2"
-              v-model="ruleForm.orgId"
-              :options="developmentZones"
-              :show-all-levels="false"
-              :props="props"
-              clearable
-              @change="handleOrgIdChange"
-              placeholder="请先选择行政区"
-            ></el-cascader>
-            <span v-else>
-              <span style="margin-left: -15px">:</span>
-              {{ ruleForm.orgName }}
-            </span>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item label="文件路径" v-if="type == 2">
-            <span>
-              <span style="margin-left: -15px">:</span>
-              {{ ruleForm.tempUrl }}
+              {{ ruleForm.id }}
             </span>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item class="foot_wrap" v-if="type != 2">
+
+      <!-- 设备状态 -->
+      <el-row :gutter="20" v-if="type !== 2">
+        <el-col :span="12">
+          <el-form-item label="设备状态" :prop="type !== 2 ? 'status' : ''">
+            <el-select v-if="type !== 2" v-model="ruleForm.status" clearable placeholder="请选择设备状态">
+              <el-option :label="'启用'" :value="'enabled'"></el-option>
+              <el-option :label="'禁用'" :value="'disabled'"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <!-- 设备类型 -->
+      <el-row :gutter="20" v-if="type !== 2">
+        <el-col :span="12">
+          <el-form-item label="设备类型" :prop="type !== 2 ? 'type' : ''">
+            <el-input v-if="type !== 2" v-model="ruleForm.type" clearable placeholder="请输入设备类型"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <!-- 设备型号 -->
+      <el-row :gutter="20" v-if="type !== 2">
+        <el-col :span="12">
+          <el-form-item label="设备型号" :prop="type !== 2 ? 'model' : ''">
+            <el-input v-if="type !== 2" v-model="ruleForm.model" clearable placeholder="请输入设备型号"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <!-- 经纬度位置 -->
+      <el-row :gutter="20" v-if="type !== 2">
+        <el-col :span="12">
+          <el-form-item label="设备位置(经度)" :prop="type !== 2 ? 'lng' : ''">
+            <el-input v-if="type !== 2" v-model="ruleForm.lng" clearable placeholder="请输入经度"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="设备位置(纬度)" :prop="type !== 2 ? 'lat' : ''">
+            <el-input v-if="type !== 2" v-model="ruleForm.lat" clearable placeholder="请输入纬度"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <!-- ROS相关信息，在详情页展示 -->
+      <el-row :gutter="20" v-if="type === 2">
+        <el-col :span="24">
+          <el-form-item label="ROS IP 地址">
+            <el-input v-model="ruleForm.rosIp" clearable placeholder="请输入 ROS IP 地址" :disabled="!isEditing"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20" v-if="type === 2">
+        <el-col :span="24">
+          <el-form-item label="ROS 节点">
+            <div v-for="(node, index) in ruleForm.rosNodes" :key="index" class="ros-node-item">
+              <el-row :gutter="20">
+                <!-- 节点名称 -->
+                <el-col :span="10">
+                  <el-form-item :label="'节点名称 ' + (index + 1)">
+                    <el-input v-model="node.nodeName" :disabled="!isEditing" clearable placeholder="请输入节点名称"></el-input>
+                  </el-form-item>
+                </el-col>
+
+                <!-- 节点类型 -->
+                <el-col :span="10">
+                  <el-form-item :label="'节点类型 ' + (index + 1)">
+                    <el-input v-model="node.nodeType" :disabled="!isEditing" clearable placeholder="请输入节点类型"></el-input>
+                  </el-form-item>
+                </el-col>
+
+                <!-- 删除节点 -->
+                <el-col :span="2" v-if="isEditing">
+                  <el-button @click="removeNode(index)" type="danger" icon="el-icon-delete"></el-button>
+                </el-col>
+              </el-row>
+            </div>
+
+            <!-- 新增节点 -->
+            <el-button v-if="isEditing" @click="addNode" type="primary" icon="el-icon-plus">新增节点</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <!-- 操作按钮 -->
+      <el-form-item class="foot_wrap" v-if="type !== 2">
         <el-button @click="resetForm('ruleForm')">重置</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
+      </el-form-item>
+
+      <!-- 详情页修改按钮 -->
+      <el-form-item class="foot_wrap" v-if="type === 2">
+        <el-button type="primary" @click="handleEdit" style="width: 100%">修改</el-button>
+      </el-form-item>
+
+      <!-- 提交修改按钮 -->
+      <el-form-item class="foot_wrap" v-if="isEditing">
+        <el-button type="primary" @click="submitRosChanges" style="width: 100%">提交ROS修改</el-button>
+        <el-button @click="cancelEdit" style="width: 100%">取消修改</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
+
 <script>
-  import { postApi, getApi } from "@/api/request";
   export default {
-    props: ["type", "id", "districtList", "projectTypeList"],
+    props: ["type", "id", "euqipmentTypeList"], // type 是页签类型 (新增/编辑/详情)，id 是传递的设备ID
     data() {
       return {
-        developmentZones: [],
+        isEditing: false, // 是否处于ROS编辑模式
         ruleForm: {
-          source: "",
-          proType: "",
-          name: "",
-          code: "",
-          orgId: "",
-          areaCode: "",
-          proYear: "",
-          beginTime: "",
-        },
-        rules: {
-          proType: [
-            {
-              required: true,
-              message: "请选择项目类型",
-              trigger: "change",
-            },
-          ],
-          name: [
-            {
-              required: true,
-              message: "请选择关联项目",
-              trigger: "change",
-            },
-          ],
-          areaCode: [
-            {
-              required: true,
-              message: "请选择行政区",
-              trigger: "change",
-            },
-          ],
-          orgId: [
-            {
-              required: sessionStorage.getItem("dept_code") == "DDM-ZB-009" ? false : true,
-              message: "请选择开发区",
-              trigger: "change",
-            },
-          ],
-          proYear: [
-            {
-              // pattern: /^[\u4E00-\u9FA5A-Za-z0-9_]+$/,
-              pattern: /^[0-9]+$/,
-              message: "请输入数字",
-              trigger: "blur",
-            },
-          ],
-        },
-        proSourceList: [],
-        connectProList: [] /* 待优化查询，分页 */,
-        props: {
-          emitPath: false,
-          checkStrictly: true,
-          label: "name",
-          value: "id",
+          id: "", // 设备编号
+          name: "", // 设备名称
+          status: "", // 设备状态
+          type: "", // 设备类型
+          model: "", // 设备型号
+          lat: "", // 纬度
+          lng: "", // 经度
+          rosIp: "", // ROS IP地址
+          rosNodes: [{ nodeName: "", nodeType: "" }], // ROS节点信息（允许多个节点）
         },
       };
     },
-    created() {
-      this.handleAreaCodeChange();
-    },
     mounted() {
-      if (this.type != 2) {
-        this.getProSource();
+      if (this.type === 2) {
+        this.getDeviceDetail(this.id); // 获取设备详情（含ROS信息）
+      } else if (this.type === 1) {
+        this.getDeviceDetail(this.id); // 获取并回填已有设备信息（不涉及ROS信息）
+      } else {
+        this.initializeForm(); // 新增时初始化表单
       }
-      if (this.type) {
-        //修改or详情
-        this.getResultsDetailInfo();
-      }
-    },
-    watch: {
-      "ruleForm.source": {
-        handler(newD, oldD) {
-          if (this.type != 2) {
-            this.getConnectPro(newD);
-          }
-        },
-      },
     },
     methods: {
-      //获取项目来源
-      getProSource() {
-        getApi(`/sys/macro/value`, { value: "project_source_type" }).then((res) => {
-          let { data } = res;
-          if (data.code == 0) {
-            this.proSourceList = data.data;
-          }
-        });
-      },
-      //获取关联项目
-      getConnectPro(source) {
-        if (source) {
-          this.ruleForm.name = "";
-          getApi(`/item/project/find`, { source }).then((res) => {
-            let { data } = res;
-            if (data.code == 0) {
-              this.connectProList = Object.freeze(data.data);
-            }
-          });
+      // 获取设备详情信息
+      getDeviceDetail(id) {
+        // 模拟数据获取逻辑
+        const deviceDetails = [
+          {
+            id: "143rasdwtfb",
+            name: "DJI_Mavic_3E",
+            status: "enabled",
+            type: "无人机",
+            model: "大疆Mavic3E",
+            lat: "39.904987",
+            lng: "116.405289",
+            rosIp: "192.168.1.1",
+            rosNodes: [
+              { nodeName: "/stereo_camera/right/image_raw", nodeType: "sensor_msgs/Image" },
+              { nodeName: "/cloud_registered", nodeType: "sensor_msgs/PointCloud2" },
+              { nodeName: "/mavros/imu/data", nodeType: "sensor_msgs/Imu" },
+            ],
+          },
+          {
+            id: "123fas123ds",
+            name: "轻舟机器人",
+            status: "disabled",
+            type: "无人车",
+            model: "CUN01",
+            lat: "34.0522° N",
+            lng: "118.2437° W",
+            rosIp: "192.168.1.2",
+            rosNodes: [
+              { nodeName: "节点A", nodeType: "执行器" },
+              { nodeName: "节点B", nodeType: "传感器" },
+            ],
+          },
+        ];
+
+        // 查找设备数据并回填
+        const device = deviceDetails.find((item) => item.id === id);
+        if (device) {
+          this.ruleForm = { ...device }; // 填充表单数据
         }
       },
-      //成果详情信息
-      getResultsDetailInfo() {
-        getApi(`/item/project/detail`, { id: this.id }).then((res) => {
-          let { data } = res;
-          if (data.code == 0) {
-            this.ruleForm = data.data;
-          }
-        });
-      },
-      //关联项目选择回调
-      handleConnectPro(e) {
-        this.ruleForm.name = e.name;
-        this.ruleForm.code = e.code;
-        this.ruleForm.proYear = e.actualStartTime ? e.actualStartTime.slice(0, 4) : e.planStartTime.slice(0, 4);
 
-        this.ruleForm.beginTime = e.actualStartTime ? e.actualStartTime : e.planStartTime;
+      // 初始化表单（新增）
+      initializeForm() {
+        this.ruleForm = {
+          id: "",
+          name: "",
+          status: "enabled",
+          type: "",
+          model: "",
+          lat: "",
+          lng: "",
+          rosIp: "",
+          rosNodes: [{ nodeName: "", nodeType: "" }],
+        };
       },
-      //项目类型选择回调
-      handleProTypeChange(e) {
-        this.ruleForm.proType = e;
-      },
-      //行政区选择回调
-      handleAreaCodeChange(e) {
-        this.ruleForm.areaCode = e;
-        getApi(`/sys/org/tree`, { areaCode: e }).then((res) => {
-          let { data } = res;
-          if (data.code == 0) {
-            this.developmentZones = data.data;
-          }
-        });
-      },
-      //开发区选择回调
-      handleOrgIdChange(e) {
-        this.ruleForm.orgId = e;
-      },
+
+      // 提交表单
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let {
-              ruleForm: { source, proType, name, code, orgId, areaCode, proYear, beginTime },
-            } = this;
-            let params = {
-              source,
-              beginTime,
-              name,
-              code,
-              proType,
-              orgId,
-              areaCode, //: areaCode[areaCode.length - 1]
-              proYear,
-            };
-            if (this.type == 0) {
-              //新增
-              postApi(`/item/project`, params).then((res) => {
-                let { data } = res;
-                if (data.code == 0) {
-                  this.$message({
-                    type: "success",
-                    message: "新增成功!",
-                  });
-                  this.$emit("closePop");
-                }
-              });
-            } else {
-              //编辑
-              // postApi(`/item/project`, params).then(
-              //   res => {
-              //     let { data } = res;
-              //     if (data.code == 0) {
-              //       this.$message({
-              //         type: "success",
-              //         message: "修改成功!"
-              //       });
-              //       this.$emit("closePop");
-              //       this.resetForm("ruleForm");
-              //     }
-              //   }
-              // );
-            }
+            this.$emit("closePop"); // 关闭弹窗
+            this.$message.success("提交成功!");
           } else {
-            console.log("error submit!!");
-            return false;
+            this.$message.error("表单验证失败!");
           }
         });
       },
+
+      // 重置表单
       resetForm(formName) {
         this.$refs[formName].resetFields();
+      },
+
+      // 进入编辑模式
+      handleEdit() {
+        this.isEditing = true; // 开启ROS信息编辑
+      },
+
+      // 退出编辑模式
+      cancelEdit() {
+        this.isEditing = false; // 取消编辑
+        this.getDeviceDetail(this.id); // 恢复原始数据
+      },
+
+      // 提交ROS节点的修改
+      submitRosChanges() {
+        this.$message.success("ROS节点修改成功!");
+        this.isEditing = false;
+      },
+
+      // 新增ROS节点
+      addNode() {
+        this.ruleForm.rosNodes.push({ nodeName: "", nodeType: "" });
+      },
+
+      // 删除ROS节点
+      removeNode(index) {
+        this.ruleForm.rosNodes.splice(index, 1);
       },
     },
   };
 </script>
 
-<style lang="less" scoped>
+<style scoped>
   .pop_container {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 10px 20px !important;
-
-    /deep/.select_popper {
-      max-width: 300px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /deep/.select_popper:hover .el-popper {
-      display: block !important;
-    }
-
-    /deep/.select_popper .el-popper {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      white-space: normal;
-    }
-
-    /deep/.el-table__cell {
-      text-align: center;
-    }
-    .module_dia {
-      margin-top: 320px;
-      /deep/.el-dialog {
-        border: 1px solid #b6cfd3;
-        border-radius: 15px !important;
-      }
-    }
-
-    .form_wrap {
-      /deep/.el-tag {
-        margin-bottom: 15px !important;
-      }
-      /deep/ .el-color-picker__trigger {
-        width: 218px !important;
-        height: 38px !important;
-      }
-      .foot_wrap {
-        margin-bottom: 0 !important;
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-
-        /deep/ .el-form-item__content {
-          margin-left: 0 !important;
-        }
-        /deep/ .el-button {
-          padding: 10px 50px;
-        }
-        /deep/.el-button--default {
-          color: #fff;
-          background-color: #a2a2a2;
-        }
-      }
-      /deep/ .el-form-item__label {
-        width: 115px !important;
-      }
-      /deep/ .el-form-item__content {
-        margin-left: 125px !important;
-      }
-    }
+    padding: 20px;
+  }
+  .form_wrap {
+    margin-top: 10px;
+  }
+  .foot_wrap {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .ros-node-item {
+    margin-bottom: 15px;
   }
 </style>

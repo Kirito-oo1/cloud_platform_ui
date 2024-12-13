@@ -91,6 +91,11 @@ const routes = [
             component: () => import("@/views/HomeView/main/system/user"),
           },
           {
+            path: "/system/role",
+            name: "角色管理",
+            component: () => import("@/views/HomeView/main/system/role"),
+          },
+          {
             path: "/system/log",
             name: "日志管理",
             component: () => import("@/views/HomeView/main/system/log"),

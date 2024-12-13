@@ -35,72 +35,77 @@
           {
             name: "系统首页",
             url: "/systemHome",
-            icon: "icon-shouye",
+            icon: "icon-xitongshouye",
             list: [],
           },
           {
             name: "系统功能",
             url: "/systemFunction",
-            icon: "icon-ditu",
+            icon: "icon-xitonggongnengguanli",
             list: [
               {
                 name: "任务规划",
                 url: "/systemFunction/missionPlanner",
-                icon: "icon-ditu",
+                icon: "icon-tiaodurenwuguihua",
               },
               {
                 name: "多机SLAM",
                 url: "/systemFunction/slamPointCloud",
-                icon: "icon-ditu",
+                icon: "icon-duojiwei",
               },
               {
                 name: "图像拼接",
                 url: "/systemFunction/pictureMerge",
-                icon: "icon-ditu",
+                icon: "icon-pinjie",
               },
               {
                 name: "手持设备",
                 url: "/systemFunction/handheld_device",
-                icon: "icon-ditu",
+                icon: "icon-thin-_mobile_iph",
               },
               {
                 name: "高斯模型",
                 url: "/systemFunction/gaussianModel",
-                icon: "icon-ditu",
+                icon: "icon-gaosihunhe",
               },
             ],
           },
           {
             name: "设备可视化",
             url: "/equipmentVisual",
-            icon: "icon-ditu",
+            icon: "icon-a-visualizeddashboard",
             list: [
               {
                 name: "无人设备展示",
                 url: "/equipmentVisual/unmannedEquipment",
-                icon: "icon-ditu",
+                icon: "icon-wurenche",
               },
               {
                 name: "首师大无人机",
                 url: "/equipmentVisual/cnuUVA",
-                icon: "icon-ditu",
+                icon: "icon-wurenji",
               },
             ],
           },
           {
             name: "系统管理",
             url: "/system",
-            icon: "icon-xitongguanli-",
+            icon: "icon-xitongguanli1",
             list: [
               {
                 name: "设备管理",
                 url: "/system/equipment",
-                icon: "icon-ditu",
+                icon: "icon-shebeiguanli",
               },
               {
                 name: "用户管理",
                 url: "/system/user",
                 icon: "icon-yonghuguanli",
+              },
+              {
+                name: "角色管理",
+                url: "/system/role",
+                icon: "icon-yidongyunkongzhitaiicon45",
               },
               {
                 name: "日志管理",
