@@ -13,15 +13,14 @@ Vue.use(less);
 Vue.prototype.$echarts = echarts;
 
 // pro
-// Vue.prototype.layerServerURL = '';
-// Vue.prototype.serverURL = '';
+Vue.prototype.serverURL = "http://47.96.137.124:8000";
 // Vue.prototype.unifyLoginServerUrl = '';
 // Vue.prototype.webPath = '';
 // Vue.prototype.clientId = "";
 // Vue.prototype.clientSecret = "";
 
 // dev
-Vue.prototype.serverURL = "http://127.0.0.1:8000";
+// Vue.prototype.serverURL = "http://127.0.0.1:8000";
 // Vue.prototype.unifyLoginServerUrl = 'http://localhost:9999';
 // Vue.prototype.webPath = 'http://localhost:8083';
 // Vue.prototype.clientId = "nodeFPqz0FlF7V39bvKvzuuico";
