@@ -2,7 +2,7 @@
  * @Author: Zhiyu Zheng
  * @Date: 2024-10-18 22:40:30
  * @LastEditors: Zhiyu Zheng
- * @LastEditTime: 2024-12-16 23:17:47
+ * @LastEditTime: 2024-12-16 23:52:26
  * @FilePath: \cloud_platform_ui\src\views\Login\index.vue
  * @Description: 登录页
 -->
@@ -62,39 +62,19 @@
         randerNum: "",
       };
     },
-    created() {
-      // if (sessionStorage.getItem("userToken")) {
-      //   this.$router.push("/map");
-      //   history.pushState(null, null, document.URL);
-      //   window.addEventListener(
-      //     "popstate",
-      //     function (e) {
-      //       history.pushState(null, null, document.URL);
-      //     },
-      //     false
-      //   );
-      // }
-    },
+    created() {},
     mounted() {},
     methods: {
       // 登录
       submitForm(formName) {
         let _this = this;
-        let header = {
-          "Content-Type": "application/json",
-          Authorization: "",
-          "X-CSRFToken": document.cookie
-            .split(";")
-            .find((c) => c.trim().startsWith("csrftoken="))
-            .split("=")[1], // 添加 CSRF Token
-        };
         let params = {
           username: this.form.username,
           password: this.form.password,
         };
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            postApi(`${this.serverURL}/api/login/`, params, header)
+            postApi(`${this.serverURL}/api/login/`, params)
               .then((res) => {
                 if (res.status == 200) {
                   _this.$router.push("/home");
