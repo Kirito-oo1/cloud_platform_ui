@@ -59,3 +59,9 @@ rosrun web_video_server web_video_server
 
 ![Image text](https://github.com/Kirito-oo1/cloud_platform_ui/blob/main/examplePageImage/home.png)
 ![Image text](https://github.com/Kirito-oo1/cloud_platform_ui/blob/main/examplePageImage/uva20241120.png)
+
+
+关于高斯模型的启动
+cd supersplat
+//npm i
+npm run develop

@@ -1,4 +1,4 @@
-//server.js
+// server.js
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -7,11 +7,16 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
-
+const axios = require('axios');
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:8088' })); // 指定允许的前端地址
+//app.use(cors({ origin: 'http://localhost:8088' })); // 指定允许的前端地址
+app.use(cors({ origin: '*' }));
+
 app.use(express.json());
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
 
 // 连接MongoDB
 mongoose.connect('mongodb://localhost:27017/deviceData', {
@@ -48,8 +53,9 @@ const Device = mongoose.model('Device', deviceSchema);
 app.get('/api/fetch-device-data', async (req, res) => {
   const { port } = req.query;
   const browser = await puppeteer.launch({
-    headless: false, // 打开浏览器窗口
-    slowMo: 50,      // 添加延迟，便于调试
+    headless: true, // 打开无头浏览器
+    slowMo: 50,      // 添加延迟
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
   const page = await browser.newPage();
   const url = `http://47.96.137.124:${port}/html/index.html`;
@@ -148,71 +154,13 @@ app.get('/api/get-folders', async (req, res) => {
   }
 });
 
-
-// 远程下载设备文件夹
-// 导入 axios 模块
-const axios = require('axios');
-
-app.post('/api/download-folder', async (req, res) => {
-  console.log('下载文件夹请求收到');
-
-  const { port, folder } = req.body;
-  const deviceUrl = `http://47.96.137.124:${port}/${folder}/`;
-
-  console.log('请求的文件夹路径:', folder);
-
-  try {
-    // 获取文件列表
-    const response = await axios.get(deviceUrl);
-    const fileLinks = parseFileLinks(response.data);
-
-    if (fileLinks.length === 0) {
-      return res.status(404).json({ error: '文件夹为空或不存在' });
-    }
-
-    // 设置响应头，告诉浏览器这将是一个ZIP文件
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename=${folder}.zip`);
-
-    // 创建压缩流
-    const archive = archiver('zip', { zlib: { level: 9 } });
-
-    // 当客户端断开连接时，终止压缩流
-    req.on('close', () => {
-      console.log('客户端断开');
-      archive.abort();
-    });
-
-    // 当发生错误时，终止压缩并发送错误响应
-    archive.on('error', err => {
-      res.status(500).send({ error: err.message });
-    });
-
-    // 将压缩流连接到响应
-    archive.pipe(res);
-
-    // 下载文件并添加到压缩包
-    for (const link of fileLinks) {
-      const fileUrl = `${deviceUrl}${link}`;
-      const fileResponse = await axios.get(fileUrl, { responseType: 'stream' });
-      archive.append(fileResponse.data, { name: link });
-    }
-
-    // 结束并发送ZIP文件
-    archive.finalize();
-  } catch (error) {
-    console.error('下载文件夹失败:', error);
-    res.status(500).json({ error: '无法下载文件夹' });
-  }
-});
-
 // 解析设备返回的HTML，提取文件链接
 function parseFileLinks(html) {
-  const regex = /<a href="([^"]+)">[^<]+<\/a>/g;
+  const regex = /<a\s+href="([^"]+)">([^<]+)<\/a>/gi;
   const links = [];
   let match;
   while ((match = regex.exec(html)) !== null) {
-    const link = match[1];
+    const link = match[1].trim();
     // 排除上级目录的链接
     if (link !== '../') {
       links.push(link);
@@ -221,13 +169,108 @@ function parseFileLinks(html) {
   return links;
 }
 
+/**
+ * 递归获取目录下所有文件和其相对路径，并在遇到子目录时加入一个目录占位条目
+ * @param {string} baseUrl 当前目录的URL（必须以/结尾）
+ * @param {string} baseRelPath 当前目录的相对路径（ZIP中要保持的路径层级），以/结尾
+ * @returns {Promise<{url: string|null, relativePath: string, isDirectory?: boolean}[]>}
+ */
+async function getAllFilesInDirectory(baseUrl, baseRelPath = '') {
+  const response = await axios.get(baseUrl);
+  const contentType = response.headers['content-type'] || '';
 
+  // 如果不是HTML，说明是文件
+  if (!contentType.includes('text/html')) {
+    return [{
+      url: baseUrl,
+      relativePath: baseRelPath + path.basename(decodeURIComponent(baseUrl))
+    }];
+  }
 
+  const fileLinks = parseFileLinks(response.data);
+  let allEntries = [];
 
+  for (const link of fileLinks) {
+    const encodedLink = encodeURIComponent(link).replace(/%2F/g, '/');
+    const fullUrl = `${baseUrl}${encodedLink}`;
 
+    if (link.endsWith('/')) {
+      // 子目录
+      const newRelPath = baseRelPath + link; // 目录路径以/结尾
+      // 先添加一个目录占位条目
+      allEntries.push({
+        url: null,
+        relativePath: newRelPath,
+        isDirectory: true
+      });
+      // 再递归获取子目录内容
+      const subFiles = await getAllFilesInDirectory(fullUrl, newRelPath);
+      allEntries = allEntries.concat(subFiles);
+    } else {
+      // 文件
+      const filename = decodeURIComponent(link);
+      allEntries.push({
+        url: fullUrl,
+        relativePath: baseRelPath + filename
+      });
+    }
+  }
 
+  return allEntries;
+}
 
+app.post('/api/download-folder', async (req, res) => {
+  console.log('下载文件夹请求收到');
+  let { port, folder } = req.body;
 
+  // 去掉末尾多余的斜杠
+  folder = folder.replace(/\/+$/, '');
+  const deviceUrl = `http://47.96.137.124:${port}/${folder}/`;
 
+  console.log('请求的文件夹路径:', folder);
+  console.log('请求的deviceUrl:', deviceUrl);
 
+  try {
+    const allFiles = await getAllFilesInDirectory(deviceUrl, `${path.basename(folder)}/`);
+    console.log('递归获取到的文件列表:', allFiles);
 
+    if (allFiles.length === 0) {
+      return res.status(404).json({ error: '文件夹为空或不存在' });
+    }
+
+    // 不设置Content-Length，只使用分块传输
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename=${path.basename(folder)}.zip`);
+
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    req.on('close', () => {
+      console.log('客户端断开连接，中止压缩');
+      archive.abort();
+    });
+
+    archive.on('error', err => {
+      console.error('压缩出错:', err);
+      res.status(500).send({ error: err.message });
+    });
+
+    archive.pipe(res);
+
+    for (const entry of allFiles) {
+      console.log('Processing entry:', entry);
+      if (entry.isDirectory) {
+        // 添加空目录
+        archive.append('', { name: entry.relativePath, mode: 0o755 });
+      } else {
+        // 文件
+        const fileResponse = await axios.get(entry.url, { responseType: 'arraybuffer' });
+        archive.append(Buffer.from(fileResponse.data), { name: entry.relativePath });
+      }
+    }
+
+    await archive.finalize();
+    console.log('文件打包完成并已发送');
+  } catch (error) {
+    console.error('下载文件夹失败:', error);
+    res.status(500).json({ error: '无法下载文件夹' });
+  }
+});
