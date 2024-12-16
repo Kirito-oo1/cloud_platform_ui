@@ -1,6 +1,14 @@
 import axios from "axios";
 import router from "../router/index.js";
 
+// 获取 CSRF Token (通常存储在浏览器 Cookie 中)
+function getCSRFToken() {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; csrftoken=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return ""; // 如果没有找到 CSRF Token，返回空字符串
+}
+
 //公共配置
 const axiosSetting = axios.create({
   timeout: 500000, // 默认超时设置5s
@@ -10,20 +18,11 @@ const axiosSetting = axios.create({
 //http request(发送) 拦截器
 axiosSetting.interceptors.request.use(
   (config) => {
-    // 校验token
-    // if (!sessionStorage.getItem("userToken")) {
-    //   let addr = window.location.href;
-    //   let addrArr = addr.split("/");
-
-    //   if (addr.match(/code=.{6}#/) && addr.match(/code=.{6}#/)[0] && addrArr[addrArr.length - 1] == "main") {
-    //   } else {
-    //     router.push({
-    //       path: "/login",
-    //     });
-
-    //     sessionStorage.clear();
-    //   }
-    // }
+    // 添加 CSRF Token 到请求头
+    const csrfToken = getCSRFToken();
+    if (csrfToken) {
+      config.headers["X-CSRFToken"] = csrfToken; // 将 CSRF Token 添加到请求头
+    }
 
     // 参数设置
     if (config.method === "get") {
@@ -53,10 +52,10 @@ axiosSetting.interceptors.response.use(
   },
   (error) => {
     if (error.response.status === 401) {
-      //   router.push({
-      //     path: "/login",
-      //   });
-      //   sessionStorage.clear();
+      router.push({
+        path: "/login",
+      });
+      sessionStorage.clear();
     }
     return Promise.reject(error);
   }

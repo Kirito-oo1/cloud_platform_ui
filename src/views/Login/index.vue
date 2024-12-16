@@ -2,7 +2,7 @@
  * @Author: Zhiyu Zheng
  * @Date: 2024-10-18 22:40:30
  * @LastEditors: Zhiyu Zheng
- * @LastEditTime: 2024-12-03 19:47:56
+ * @LastEditTime: 2024-12-16 23:17:47
  * @FilePath: \cloud_platform_ui\src\views\Login\index.vue
  * @Description: 登录页
 -->
@@ -104,33 +104,8 @@
                 }
               })
               .catch((err) => {
-                _this.$message.error(err.response.data.msg);
+                _this.$message.error(err);
               });
-
-            // postfromApi(`${this.serverURL}/oauth/token?`, params, header)
-            //   .then((res) => {
-            //     sessionStorage.setItem("userToken", res.data.access_token);
-            //     sessionStorage.setItem("userName", res.data.username);
-            //     sessionStorage.setItem("nick", res.data.nick);
-            //     sessionStorage.setItem("userId", res.data.user_id);
-            //     sessionStorage.setItem("orgId", res.data.org_id);
-            //     getApi(`${this.serverURL}/sys/user/perms`).then((res) => {
-            //       let arr = res.data.data;
-            //       let audit = arr.indexOf("bsh:compo:check");
-            //       let collect = arr.indexOf("bsh:compo:collect");
-            //       sessionStorage.setItem("auditPermission", audit);
-            //       sessionStorage.setItem("collectPermission", collect);
-            //       _this.$router.push("/map");
-            //       history.pushState(null, null, document.URL);
-            //       window.addEventListener(
-            //         "popstate",
-            //         function (e) {
-            //           history.pushState(null, null, document.URL);
-            //         },
-            //         false
-            //       );
-            //     });
-            //   })
           } else {
             console.log("error submit!!");
             return false;
