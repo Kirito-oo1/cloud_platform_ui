@@ -1,85 +1,40 @@
 import request from "./axios";
-//get请求
+
+// get 请求
 export const getApi = (url, params, header) => {
-    let headers = {
-        "Authorization": 'Bearer ' + sessionStorage.getItem("userToken") || ''
-    }
-    return request({
-        url: url,
-        headers: header || headers,
-        method: "get",
-        params: params,
-    });
+  return request({
+    url: url,
+    headers: header || {}, // 不需要再添加 Authorization 头
+    method: "get",
+    params: params,
+  });
 };
-//post请求
+
+// post 请求
 export const postApi = (url, params, header) => {
-    let headers = {
-        "Authorization": 'Bearer ' + sessionStorage.getItem("userToken") || ''
-    }
-    return request({
-        url: url,
-        headers: header || headers,
-        method: "post",
-        data: params,
-    });
-};
-//post下载请求
-export const loadApi = (url, params, header) => {
-    let headers = {
-        "Authorization": 'Bearer ' + sessionStorage.getItem("userToken") || ''
-    }
-    return request({
-        url: url,
-        headers: header || headers,
-        method: "post",
-        data: params,
-        responseType: 'blob'
-    });
+  return request({
+    url: url,
+    headers: header || {},
+    method: "post",
+    data: params,
+  });
 };
 
-//postfrom请求
-export const postfromApi = (url, params, header) => {
-    let headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        "Authorization": 'Bearer ' + sessionStorage.getItem("userToken")
-    }
-    let tfr = [function(data) {
-        let form = ''
-        for (let p in data) {
-            form += encodeURIComponent(p) + '=' + encodeURIComponent(data[p]) + '&'
-        }
-        return form
-    }]
-    return request({
-        url: url,
-        headers: header || headers,
-        method: "post",
-        data: params,
-        transformRequest: tfr
-    });
-};
-
-//delete请求
+// delete 请求
 export const delApi = (url, header) => {
-    let headers = {
-        "Authorization": 'Bearer ' + sessionStorage.getItem("userToken") || ''
-    }
-    return request({
-        url: url,
-        headers: headers,
-        method: "delete",
-    });
+  return request({
+    url: url,
+    headers: header || {},
+    method: "delete",
+  });
 };
 
-//put请求
+// put 请求
 export const putApi = (url, params, header) => {
-    let headers = {
-        "Authorization": 'Bearer ' + sessionStorage.getItem("userToken") || ''
-    }
-    return request({
-        url: url,
-        headers: headers,
-        method: "put",
-        data: params
-    });
+  return request({
+    url: url,
+    headers: header || {},
+    method: "put",
+    data: params,
+  });
 };

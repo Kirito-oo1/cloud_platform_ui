@@ -12,10 +12,11 @@ function getCSRFToken() {
 //公共配置
 const axiosSetting = axios.create({
   timeout: 500000, // 默认超时设置5s
-  baseURL: "", // 相对路径设置
+  baseURL: "", // 这里设置为后端的基地址
+  withCredentials: true, // 确保请求时携带 Cookie（会话信息和 CSRF Token）
 });
 
-//http request(发送) 拦截器
+// http request(发送) 拦截器
 axiosSetting.interceptors.request.use(
   (config) => {
     // 添加 CSRF Token 到请求头
@@ -26,13 +27,14 @@ axiosSetting.interceptors.request.use(
 
     // 参数设置
     if (config.method === "get") {
-      //get请求下 参数在params中，其他请求在data中
+      // GET 请求的参数设置
       config.params = config.params || {};
       let json = JSON.parse(JSON.stringify(config.params));
-      //一些参数处理
+      // 一些参数处理（可选）
     } else {
+      // POST、PUT 等请求的参数设置
       config.data = config.data || {};
-      //一些参数处理
+      // 一些参数处理（可选）
     }
     return config;
   },
@@ -41,7 +43,7 @@ axiosSetting.interceptors.request.use(
   }
 );
 
-//http response 拦截器
+// http response 拦截器
 axiosSetting.interceptors.response.use(
   (response) => {
     if (response.status === 200) {
@@ -51,12 +53,19 @@ axiosSetting.interceptors.response.use(
     }
   },
   (error) => {
-    if (error.response.status === 401) {
+    // 401：未认证，跳转到登录页面
+    if (error.response && error.response.status === 401) {
       router.push({
         path: "/login",
       });
-      sessionStorage.clear();
+      sessionStorage.clear(); // 清除会话存储
     }
+
+    // 403：没有权限
+    if (error.response && error.response.status === 403) {
+    }
+
+    // 其他错误
     return Promise.reject(error);
   }
 );
