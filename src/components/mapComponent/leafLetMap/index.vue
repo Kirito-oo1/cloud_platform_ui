@@ -2,7 +2,7 @@
  * @Author: Zhiyu Zheng
  * @Date: 2024-11-07 16:18:44
  * @LastEditors: Zhiyu Zheng
- * @LastEditTime: 2024-12-03 23:49:35
+ * @LastEditTime: 2024-12-17 21:21:10
  * @FilePath: \cloud_platform_ui\src\components\mapComponent\leafLetMap\index.vue
  * @Description: leaflet地图
 -->
@@ -274,15 +274,7 @@
       //开始任务规划
       start_mission_planner() {
         this.mission_planner_form_visible = false;
-        let header = {
-          "Content-Type": "application/json",
-          Authorization: "",
-          "X-CSRFToken": document.cookie
-            .split(";")
-            .find((c) => c.trim().startsWith("csrftoken="))
-            .split("=")[1], // 添加 CSRF Token
-        };
-        postApi(`${this.serverURL}/api/start_mission_planner/`, this.mission_planner_form, header).then((res) => {
+        postApi(`${this.serverURL}/api/start_mission_planner/`, this.mission_planner_form).then((res) => {
           if (this.Mission_result_polyline_one) {
             this.Mission_result_polyline_one.remove();
           }
@@ -293,7 +285,6 @@
             this.Mission_result_polyline_three.remove();
           }
           const colors = ["#efc452", "red", "blue"];
-          debugger;
           for (let index_x = 0; index_x < res.data.result.length; index_x++) {
             const route_arr = res.data.result[index_x];
             let points = [];
