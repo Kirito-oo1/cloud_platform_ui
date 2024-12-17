@@ -2,7 +2,7 @@
 <template>
     <div style="width:100%; height:100%;">
       <iframe 
-        src="http://localhost:3000"
+        src="http://47.96.137.124:3000"
         frameborder="0" 
         style="width:100%; height:100%;"
       >
